@@ -1,4 +1,4 @@
-**/node_modules
-./server/dist/
-./server/.env
-.git/
+**/node_modules/
+/server/dist
+**/.env
+.git
