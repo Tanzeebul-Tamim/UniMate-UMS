@@ -55,10 +55,9 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 
 const studentSchema = new Schema<TStudent, StudentModel>(
   {
+    id: { type: String, required: [true, 'ID is required'], unique: true },
     user: {
       type: Schema.Types.ObjectId,
-      required: [true, 'User ID is a required field'],
-      unique: true,
       ref: 'User',
     },
     name: { type: nameSchema, required: [true, 'Name is required'] },
@@ -110,6 +109,10 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Local guardian is required'],
     },
     profileImg: { type: String },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'Academic_Semester',
+    },
   },
   { toJSON: { virtuals: true } },
 );
@@ -117,7 +120,11 @@ const studentSchema = new Schema<TStudent, StudentModel>(
 //* virtual
 studentSchema.virtual('fullName').get(function () {
   const name = this.name;
-  return name.firstName + ' ' + name?.middleName + ' ' + name.lastName;
+  if (name.middleName) {
+    return name.firstName + ' ' + name?.middleName + ' ' + name.lastName;
+  } else if (!name.middleName) {
+    return name.firstName + ' ' + name.lastName;
+  }
 });
 
 //* Query middleware

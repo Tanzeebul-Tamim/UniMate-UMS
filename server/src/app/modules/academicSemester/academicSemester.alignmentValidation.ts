@@ -5,8 +5,8 @@ import {
 } from './academicSemester.constant';
 import { TAcademicSemester } from './academicSemester.interface';
 
-//! For create a semester
-//* name-code alignment validation
+//! For creating a semester
+//* name-code validation
 export const createNameCodeValidation = (payload: TAcademicSemester) => {
   const semesterCode = academicSemesterNameCodeMapper[payload.name];
   if (semesterCode !== payload.code) {
@@ -16,7 +16,7 @@ export const createNameCodeValidation = (payload: TAcademicSemester) => {
   }
 };
 
-//* name-month alignment validation
+//* name-month validation
 export const createNameMonthValidation = (payload: TAcademicSemester) => {
   const startEndMonth = academicSemesterNameMonthMapper[payload.name];
   const startMonth = startEndMonth[0];
@@ -28,8 +28,8 @@ export const createNameMonthValidation = (payload: TAcademicSemester) => {
   }
 };
 
-//! For update a semester
-//* name-code alignment validation
+//! For updating a semester
+//* name-code validation
 export const updateNameCodeValidation = (
   payload: Partial<TAcademicSemester>,
 ) => {
