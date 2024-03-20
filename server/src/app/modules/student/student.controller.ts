@@ -1,62 +1,60 @@
-import { NextFunction, Request, Response } from 'express';
 import { StudentServices } from './student.service';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
+import catchAsync from '../../utils/catchAsync';
 
-const getAStudent = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { studentId } = req.params;
-    const result = await StudentServices.getAStudentFromDB(studentId);
+const getAllStudents = catchAsync(async (__, res) => {
+  const result = await StudentServices.getAllStudentFromDB();
 
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Students retrieved successfully',
+    data: result,
+  });
+});
+
+const getAStudent = catchAsync(async (req, res) => {
+  const { studentId } = req.params;
+  const result = await StudentServices.getAStudentFromDB(studentId);
+
+  if (result.length !== 0) {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: 'Student is retrieved successfully',
       data: result,
     });
-  } catch (err) {
-    next(err);
-  }
-};
-
-const getAllStudents = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const result = await StudentServices.getAllStudentFromDB();
-
+  } else {
     sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Students retrieved successfully',
-      data: result,
+      statusCode: httpStatus.NOT_FOUND,
+      success: false,
+      message: 'Student not found',
+      data: null,
     });
-  } catch (err) {
-    next(err);
   }
-};
+});
 
-const deleteAStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { studentId } = req.params;
-    const result = await StudentServices.deleteAStudentFromDB(studentId);
+const deleteAStudent = catchAsync(async (req, res) => {
+  const { studentId } = req.params;
+  const result = await StudentServices.deleteAStudentFromDB(studentId);
 
+  if (result.acknowledged) {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: 'Student is deleted successfully',
       data: result,
     });
-  } catch (err) {
-    next(err);
+  } else {
+    sendResponse(res, {
+      statusCode: httpStatus.NOT_FOUND,
+      success: false,
+      message: 'Student not found',
+      data: result,
+    });
   }
-};
+});
 
 export const StudentControllers = {
   getAllStudents,
