@@ -1,6 +1,6 @@
 import express from 'express';
-import { AcademicSemesterControllers } from './academicSemester.controller';
 import validateRequest from '../../middlewares/validateRequest';
+import { AcademicSemesterControllers } from './academicSemester.controller';
 import { AcademicSemesterValidations } from './academicSemester.validation';
 
 const router = express.Router();
@@ -12,7 +12,6 @@ router.post(
   ),
   AcademicSemesterControllers.createAcademicSemester,
 );
-
 router.get('/', AcademicSemesterControllers.getAllAcademicSemesters);
 router.get('/:semesterId', AcademicSemesterControllers.getAnAcademicSemester);
 router.patch(

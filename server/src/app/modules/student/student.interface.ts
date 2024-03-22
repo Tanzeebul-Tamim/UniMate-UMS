@@ -32,27 +32,27 @@ export type TLocalGuardian = TIndividualGuardian & {
   relationship: string;
 };
 
-export type TAcademicDepartment =
-  | 'Computer Science'
-  | 'Electrical Engineering'
-  | 'Mechanical Engineering'
-  | 'Civil Engineering'
-  | 'Biology'
-  | 'Chemistry'
-  | 'Physics'
-  | 'Mathematics'
-  | 'Business Administration'
-  | 'Economics'
-  | 'Psychology'
-  | 'Sociology'
-  | 'English Literature'
-  | 'History'
-  | 'Political Science'
-  | 'Environmental Science'
-  | 'Fine Arts'
-  | 'Music'
-  | 'Health Sciences'
-  | 'Linguistics';
+// export type TAcademicDepartment =
+//   | 'Computer Science'
+//   | 'Electrical Engineering'
+//   | 'Mechanical Engineering'
+//   | 'Civil Engineering'
+//   | 'Biology'
+//   | 'Chemistry'
+//   | 'Physics'
+//   | 'Mathematics'
+//   | 'Business Administration'
+//   | 'Economics'
+//   | 'Psychology'
+//   | 'Sociology'
+//   | 'English Literature'
+//   | 'History'
+//   | 'Political Science'
+//   | 'Environmental Science'
+//   | 'Fine Arts'
+//   | 'Music'
+//   | 'Health Sciences'
+//   | 'Linguistics';
 
 export type TNationality =
   | 'American'
@@ -71,7 +71,8 @@ export type TNationality =
   | 'Brazilian'
   | 'Mexican'
   | 'South Korean'
-  | 'Turkish';
+  | 'Turkish'
+  | 'Bangladeshi';
 
 export type TReligion =
   | 'Christianity'
@@ -102,7 +103,8 @@ export type TStudent = {
   localGuardian: TLocalGuardian;
   profileImage?: string;
   admissionSemester: Types.ObjectId;
-  academicDepartment: TAcademicDepartment;
+  // academicDepartment: Types.ObjectId;
+  academicDepartment: string;
   nationality: TNationality;
   religion: TReligion;
 };

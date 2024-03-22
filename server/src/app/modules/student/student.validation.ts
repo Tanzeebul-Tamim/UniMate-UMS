@@ -46,6 +46,7 @@ export const createStudentValidationSchema = z.object({
       localGuardian: localGuardianValidationSchema,
       profileImage: z.string().optional(),
       admissionSemester: z.string(),
+      // academicDepartment: z.string(),
       academicDepartment: z.enum([
         'Computer Science',
         'Electrical Engineering',
@@ -86,6 +87,7 @@ export const createStudentValidationSchema = z.object({
         'Mexican',
         'South Korean',
         'Turkish',
+        'Bangladeshi',
       ]),
       religion: z.enum([
         'Christianity',

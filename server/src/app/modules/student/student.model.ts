@@ -79,10 +79,15 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Email is required'],
       unique: true,
     },
-    contactNo: { type: String, required: [true, 'Contact no is required'] },
+    contactNo: {
+      type: String,
+      required: [true, 'Contact no is required'],
+      unique: true,
+    },
     emergencyContactNo: {
       type: String,
       required: [true, 'Emergency contact no is required'],
+      unique: true,
     },
     bloodGroup: {
       type: String,
@@ -113,6 +118,10 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: Schema.Types.ObjectId,
       ref: 'Academic_Semester',
     },
+    // academicDepartment: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: 'Academic_Department'
+    // },
     academicDepartment: {
       type: String,
       enum: {
@@ -138,8 +147,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
           'Health Sciences',
           'Linguistics',
         ],
-        message:
-          'Invalid academic department! Please choose a valid department.',
+        message: 'Invalid department. Please choose a valid department.',
       },
     },
     nationality: {
@@ -163,6 +171,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
           'Mexican',
           'South Korean',
           'Turkish',
+          'Bangladeshi',
         ],
         message: 'Invalid nationality. Please choose a valid nationality.',
       },

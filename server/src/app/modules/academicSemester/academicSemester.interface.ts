@@ -12,7 +12,7 @@ export type TMonths =
   | 'November'
   | 'December';
 
-export type TAcademicSemesterName = 'Autumn' | 'Summer' | 'Fall';
+export type TAcademicSemesterName = 'Spring' | 'Summer' | 'Fall';
 export type TAcademicSemesterCode = '01' | '02' | '03';
 
 export type TAcademicSemester = {
@@ -29,7 +29,7 @@ export type TAcademicSemesterNameCodeMapper = {
 };
 
 export type TAcademicSemesterNameMonthMapper = {
-  Autumn: ['January', 'April'];
+  Spring: ['January', 'April'];
   Summer: ['May', 'August'];
   Fall: ['September', 'December'];
 };
