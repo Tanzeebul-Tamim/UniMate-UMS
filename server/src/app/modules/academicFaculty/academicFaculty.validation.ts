@@ -1,7 +1,10 @@
 import { z } from 'zod';
+import { AcademicFacultyNames } from './academicFaculty.constant';
 
 const createUpdateAcademicFacultyValidationSchema = z.object({
-  name: z.string({ invalid_type_error: 'Academic faculty must be a string' }),
+  body: z.object({
+    name: z.enum([...AcademicFacultyNames] as [string, ...string[]]),
+  }),
 });
 
 export const AcademicFacultyValidations = {

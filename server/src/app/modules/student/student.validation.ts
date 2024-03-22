@@ -46,29 +46,7 @@ export const createStudentValidationSchema = z.object({
       localGuardian: localGuardianValidationSchema,
       profileImage: z.string().optional(),
       admissionSemester: z.string(),
-      // academicDepartment: z.string(),
-      academicDepartment: z.enum([
-        'Computer Science',
-        'Electrical Engineering',
-        'Mechanical Engineering',
-        'Civil Engineering',
-        'Biology',
-        'Chemistry',
-        'Physics',
-        'Mathematics',
-        'Business Administration',
-        'Economics',
-        'Psychology',
-        'Sociology',
-        'English Literature',
-        'History',
-        'Political Science',
-        'Environmental Science',
-        'Fine Arts',
-        'Music',
-        'Health Sciences',
-        'Linguistics',
-      ]),
+      academicDepartment: z.string(),
       nationality: z.enum([
         'American',
         'British',
@@ -96,7 +74,6 @@ export const createStudentValidationSchema = z.object({
         'Buddhism',
         'Judaism',
         'Sikhism',
-        "Bahá'í Faith",
         'Jainism',
         'Shinto',
         'Taoism',
@@ -106,6 +83,64 @@ export const createStudentValidationSchema = z.object({
   }),
 });
 
+export const updateStudentValidationSchema = z.object({
+  body: z.object({
+    name: nameValidationSchema.optional(),
+    gender: z.enum(['male', 'female', 'others']).optional(),
+    dateOfBirth: z.string().optional(),
+    email: z.string().email().optional(),
+    contactNo: z.string().min(1).optional(),
+    emergencyContactNo: z.string().min(1).optional(),
+    bloodGroup: z
+      .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
+      .optional(),
+    presentAddress: z.string().min(1).optional(),
+    permanentAddress: z.string().min(1).optional(),
+    guardian: guardianValidationSchema.optional(),
+    localGuardian: localGuardianValidationSchema.optional(),
+    profileImage: z.string().optional(),
+    admissionSemester: z.string().optional(),
+    academicDepartment: z.string().optional(),
+    nationality: z
+      .enum([
+        'American',
+        'British',
+        'Canadian',
+        'Chinese',
+        'French',
+        'German',
+        'Indian',
+        'Italian',
+        'Japanese',
+        'Russian',
+        'Spanish',
+        'Swiss',
+        'Australian',
+        'Brazilian',
+        'Mexican',
+        'South Korean',
+        'Turkish',
+        'Bangladeshi',
+      ])
+      .optional(),
+    religion: z
+      .enum([
+        'Christianity',
+        'Islam',
+        'Hinduism',
+        'Buddhism',
+        'Judaism',
+        'Sikhism',
+        'Jainism',
+        'Shinto',
+        'Taoism',
+        'Zoroastrianism',
+      ])
+      .optional(),
+  }),
+});
+
 export const studentValidation = {
   createStudentValidationSchema,
+  updateStudentValidationSchema,
 };

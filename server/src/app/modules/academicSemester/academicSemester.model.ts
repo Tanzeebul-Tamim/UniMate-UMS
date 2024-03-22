@@ -10,23 +10,37 @@ const academicSemesterSchema = new Schema<TAcademicSemester>(
   {
     name: {
       type: String,
-      enum: AcademicSemesterNames,
+      enum: {
+        values: AcademicSemesterNames,
+        message: 'Invalid semester name. Please choose a valid semester name',
+      },
       required: [true, 'Name is required'],
     },
     code: {
       type: String,
-      enum: AcademicSemesterCodes,
+      enum: {
+        values: AcademicSemesterCodes,
+        message: 'Invalid semester code. Please choose a valid semester code',
+      },
       required: [true, 'Code is required'],
     },
     year: { type: String, required: [true, 'Date is required'] },
     startMonth: {
       type: String,
-      enum: AcademicSemesterMonths,
+      enum: {
+        values: AcademicSemesterMonths,
+        message:
+          'Invalid semester start month. Please choose a valid semester start month',
+      },
       required: [true, 'Start month is required'],
     },
     endMonth: {
       type: String,
-      enum: AcademicSemesterMonths,
+      enum: {
+        values: AcademicSemesterMonths,
+        message:
+          'Invalid semester end month. Please choose a valid semester end month',
+      },
       required: [true, 'End month is required'],
     },
   },

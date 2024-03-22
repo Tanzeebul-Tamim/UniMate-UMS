@@ -7,6 +7,12 @@ import {
   TName,
   TStudent,
 } from './student.interface';
+import {
+  BloodGroups,
+  Genders,
+  Nationalities,
+  Religions,
+} from './student.constant';
 
 const nameSchema = new Schema<TName>({
   firstName: {
@@ -64,7 +70,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     gender: {
       type: String,
       enum: {
-        values: ['male', 'female', 'others'],
+        values: Genders,
         message:
           "{VALUE} is invalid value. The gender field can only be one of the following: 'male', 'female' or 'others'",
       },
@@ -92,7 +98,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     bloodGroup: {
       type: String,
       enum: {
-        values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+        values: BloodGroups,
         message:
           "The blood group field can only be one of the following: 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'",
       },
@@ -118,80 +124,21 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: Schema.Types.ObjectId,
       ref: 'Academic_Semester',
     },
-    // academicDepartment: {
-    //   type: Schema.Types.ObjectId,
-    //   ref: 'Academic_Department'
-    // },
     academicDepartment: {
-      type: String,
-      enum: {
-        values: [
-          'Computer Science',
-          'Electrical Engineering',
-          'Mechanical Engineering',
-          'Civil Engineering',
-          'Biology',
-          'Chemistry',
-          'Physics',
-          'Mathematics',
-          'Business Administration',
-          'Economics',
-          'Psychology',
-          'Sociology',
-          'English Literature',
-          'History',
-          'Political Science',
-          'Environmental Science',
-          'Fine Arts',
-          'Music',
-          'Health Sciences',
-          'Linguistics',
-        ],
-        message: 'Invalid department. Please choose a valid department.',
-      },
+      type: Schema.Types.ObjectId,
+      ref: 'Academic_Department',
     },
     nationality: {
       type: String,
       enum: {
-        values: [
-          'American',
-          'British',
-          'Canadian',
-          'Chinese',
-          'French',
-          'German',
-          'Indian',
-          'Italian',
-          'Japanese',
-          'Russian',
-          'Spanish',
-          'Swiss',
-          'Australian',
-          'Brazilian',
-          'Mexican',
-          'South Korean',
-          'Turkish',
-          'Bangladeshi',
-        ],
+        values: Nationalities,
         message: 'Invalid nationality. Please choose a valid nationality.',
       },
     },
     religion: {
       type: String,
       enum: {
-        values: [
-          'Christianity',
-          'Islam',
-          'Hinduism',
-          'Buddhism',
-          'Judaism',
-          'Sikhism',
-          "Bahá'í Faith",
-          'Jainism',
-          'Shinto',
-          'Taoism',
-          'Zoroastrianism',
-        ],
+        values: Religions,
         message: 'Invalid religion. Please choose a valid religion.',
       },
     },

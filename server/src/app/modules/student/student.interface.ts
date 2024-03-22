@@ -6,6 +6,8 @@ export type TName = {
   lastName: string;
 };
 
+export type TGender = 'male' | 'female' | 'others';
+
 export type TBloodGroup =
   | 'A+'
   | 'A-'
@@ -31,28 +33,6 @@ export type TLocalGuardian = TIndividualGuardian & {
   address: string;
   relationship: string;
 };
-
-// export type TAcademicDepartment =
-//   | 'Computer Science'
-//   | 'Electrical Engineering'
-//   | 'Mechanical Engineering'
-//   | 'Civil Engineering'
-//   | 'Biology'
-//   | 'Chemistry'
-//   | 'Physics'
-//   | 'Mathematics'
-//   | 'Business Administration'
-//   | 'Economics'
-//   | 'Psychology'
-//   | 'Sociology'
-//   | 'English Literature'
-//   | 'History'
-//   | 'Political Science'
-//   | 'Environmental Science'
-//   | 'Fine Arts'
-//   | 'Music'
-//   | 'Health Sciences'
-//   | 'Linguistics';
 
 export type TNationality =
   | 'American'
@@ -81,7 +61,6 @@ export type TReligion =
   | 'Buddhism'
   | 'Judaism'
   | 'Sikhism'
-  | "Bahá'í Faith"
   | 'Jainism'
   | 'Shinto'
   | 'Taoism'
@@ -91,7 +70,7 @@ export type TStudent = {
   id: string;
   user: Types.ObjectId;
   name: TName;
-  gender: 'male' | 'female' | 'others';
+  gender: TGender;
   dateOfBirth: Date;
   email: string;
   contactNo: string;
@@ -103,13 +82,13 @@ export type TStudent = {
   localGuardian: TLocalGuardian;
   profileImage?: string;
   admissionSemester: Types.ObjectId;
-  // academicDepartment: Types.ObjectId;
-  academicDepartment: string;
+  academicDepartment: Types.ObjectId;
   nationality: TNationality;
   religion: TReligion;
 };
 
 //* For creating static
 export interface StudentModel extends Model<TStudent> {
+  // eslint-disable-next-line no-unused-vars
   doesUserExist(id: string): Promise<TStudent | null>;
 }
