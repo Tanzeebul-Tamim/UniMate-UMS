@@ -7,7 +7,7 @@ const getAllStudentFromDB = async () => {
 };
 
 const getAStudentFromDB = async (id: string) => {
-  const result = await Student.aggregate([{ $match: { id: id } }]);
+  const result = await Student.findOne({ _id: id });
   return result;
 };
 
@@ -20,7 +20,7 @@ const updateAStudentFromDB = async (id: string, payload: Partial<TStudent>) => {
 };
 
 const deleteAStudentFromDB = async (id: string) => {
-  const result = await Student.updateOne({ id }, { isDeleted: true });
+  const result = await Student.updateOne({ _id: id }, { isDeleted: true });
   return result;
 };
 

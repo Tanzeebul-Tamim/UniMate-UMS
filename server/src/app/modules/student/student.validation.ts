@@ -79,6 +79,7 @@ export const createStudentValidationSchema = z.object({
         'Taoism',
         'Zoroastrianism',
       ]),
+      isDeleted: z.boolean().default(false),
     }),
   }),
 });

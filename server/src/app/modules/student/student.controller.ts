@@ -27,7 +27,7 @@ const getAStudent = catchAsync(async (req, res) => {
   const { studentId } = req.params;
   const result = await StudentServices.getAStudentFromDB(studentId);
 
-  if (result.length !== 0) {
+  if (result) {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
@@ -61,7 +61,7 @@ const deleteAStudent = catchAsync(async (req, res) => {
   const { studentId } = req.params;
   const result = await StudentServices.deleteAStudentFromDB(studentId);
 
-  if (result.acknowledged) {
+  if (result.matchedCount !== 0) {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,

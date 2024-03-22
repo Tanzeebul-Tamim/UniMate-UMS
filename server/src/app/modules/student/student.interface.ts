@@ -85,6 +85,7 @@ export type TStudent = {
   academicDepartment: Types.ObjectId;
   nationality: TNationality;
   religion: TReligion;
+  isDeleted: boolean;
 };
 
 //* For creating static

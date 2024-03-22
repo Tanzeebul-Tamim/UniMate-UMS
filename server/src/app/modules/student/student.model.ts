@@ -142,6 +142,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
         message: 'Invalid religion. Please choose a valid religion.',
       },
     },
+    isDeleted: { type: Boolean, default: false },
   },
   { toJSON: { virtuals: true } },
 );
@@ -163,12 +164,17 @@ studentSchema.pre('find', function (next) {
 });
 
 studentSchema.pre('findOne', function (next) {
+  this.findOne({ isDeleted: { $eq: false } });
+  next();
+});
+
+studentSchema.pre('findOneAndUpdate', function (next) {
   this.find({ isDeleted: { $eq: false } });
   next();
 });
 
-studentSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+studentSchema.pre('updateOne', function (next) {
+  this.find({ isDeleted: { $eq: false } });
   next();
 });
 
