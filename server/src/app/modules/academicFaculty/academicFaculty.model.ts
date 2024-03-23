@@ -17,6 +17,35 @@ const academicFacultySchema = new Schema<TAcademicFaculty>(
   { timestamps: true },
 );
 
+academicFacultySchema.pre('save', async function (next) {
+  const doesFacultyExist = await AcademicFaculty.findOne({ name: this.name });
+
+  if (doesFacultyExist) {
+    throw new Error(`${this.name} already exists`);
+  }
+  next();
+});
+
+// academicFacultySchema.pre('findOne', async function (next) {
+//   const query = this.getQuery();
+//   const doesFacultyExist = await AcademicFaculty.findOne(query);
+
+//   if (!doesFacultyExist) {
+//     throw new Error('Faculty not found');
+//   }
+//   next();
+// });
+
+// academicFacultySchema.pre('findOneAndUpdate', async function (next) {
+//   const query = this.getQuery();
+//   const doesFacultyExist = await AcademicFaculty.findOne(query);
+
+//   if (!doesFacultyExist) {
+//     throw new Error('Faculty not found');
+//   }
+//   next();
+// });
+
 export const AcademicFaculty = model<TAcademicFaculty>(
   'Academic_Faculty',
   academicFacultySchema,

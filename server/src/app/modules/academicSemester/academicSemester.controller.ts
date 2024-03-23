@@ -29,7 +29,7 @@ const getAllAcademicSemesters = catchAsync(async (__, res) => {
     sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
       success: false,
-      message: 'Academic semesters retrieved successfully',
+      message: 'No academic semesters recorded yet',
       data: result,
     });
   }
@@ -40,21 +40,12 @@ const getAnAcademicSemester = catchAsync(async (req, res) => {
   const result =
     await AcademicSemesterServices.getAnAcademicSemesterFromDB(semesterId);
 
-  if (result) {
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Academic semester is retrieved successfully',
-      data: result,
-    });
-  } else {
-    sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: 'Semester not found',
-      data: result,
-    });
-  }
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Academic semester is retrieved successfully',
+    data: result,
+  });
 });
 
 const updateAnAcademicSemester = catchAsync(async (req, res) => {

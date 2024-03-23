@@ -163,7 +163,7 @@ studentSchema.pre('find', function (next) {
   next();
 });
 
-studentSchema.pre('findOne', function (next) {
+studentSchema.pre('findOne', async function (next) {
   this.findOne({ isDeleted: { $eq: false } });
   next();
 });

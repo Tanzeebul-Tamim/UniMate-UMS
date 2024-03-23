@@ -27,21 +27,12 @@ const getAStudent = catchAsync(async (req, res) => {
   const { studentId } = req.params;
   const result = await StudentServices.getAStudentFromDB(studentId);
 
-  if (result) {
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Student is retrieved successfully',
-      data: result,
-    });
-  } else {
-    sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: 'Student not found',
-      data: null,
-    });
-  }
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student is retrieved successfully',
+    data: result,
+  });
 });
 
 const updateAStudent = catchAsync(async (req, res) => {
@@ -61,21 +52,12 @@ const deleteAStudent = catchAsync(async (req, res) => {
   const { studentId } = req.params;
   const result = await StudentServices.deleteAStudentFromDB(studentId);
 
-  if (result.matchedCount !== 0) {
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Student is deleted successfully',
-      data: result,
-    });
-  } else {
-    sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: 'Student not found',
-      data: result,
-    });
-  }
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student is deleted successfully',
+    data: result,
+  });
 });
 
 export const StudentControllers = {

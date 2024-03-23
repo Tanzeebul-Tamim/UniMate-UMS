@@ -19,12 +19,21 @@ const getAllAcademicDepartments = catchAsync(async (__, res) => {
   const result =
     await AcademicDepartmentServices.getAllAcademicDepartmentsFromDB();
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Academic departments retrieved successfully',
-    data: result,
-  });
+  if (result.length > 0) {
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Academic departments retrieved successfully',
+      data: result,
+    });
+  } else {
+    sendResponse(res, {
+      statusCode: httpStatus.NOT_FOUND,
+      success: false,
+      message: 'No academic departments recorded yet',
+      data: result,
+    });
+  }
 });
 
 const getAnAcademicDepartment = catchAsync(async (req, res) => {
