@@ -34,25 +34,15 @@ academicDepartmentSchema.pre('save', async function (next) {
   next();
 });
 
-// academicDepartmentSchema.pre('findOne', async function (next) {
-//   const query = this.getQuery();
-//   const doesDepartmentExist = await AcademicDepartment.findOne(query);
+academicDepartmentSchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
+  const doesDepartmentExist = await AcademicDepartment.findOne(query);
 
-//   if (!doesDepartmentExist) {
-//     throw new Error('Department not found');
-//   }
-//   next();
-// });
-
-// academicDepartmentSchema.pre('findOneAndUpdate', async function (next) {
-//   const query = this.getQuery();
-//   const doesDepartmentExist = await AcademicDepartment.findOne(query);
-
-//   if (!doesDepartmentExist) {
-//     throw new Error('Department not found');
-//   }
-//   next();
-// });
+  if (!doesDepartmentExist) {
+    throw new Error('Department not found');
+  }
+  next();
+});
 
 export const AcademicDepartment = model<TAcademicDepartment>(
   'Academic_Department',

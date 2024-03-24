@@ -15,7 +15,6 @@ const updateAStudentFromDB = async (id: string, payload: Partial<TStudent>) => {
   const result = await Student.findOneAndUpdate({ _id: id }, payload, {
     new: true,
   });
-
   return result;
 };
 

@@ -41,12 +41,21 @@ const getAnAcademicFaculty = catchAsync(async (req, res) => {
   const result =
     await AcademicFacultyServices.getAnAcademicFacultyFromDB(facultyId);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Academic faculty is retrieved successfully',
-    data: result,
-  });
+  if (result) {
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Academic faculty is retrieved successfully',
+      data: result,
+    });
+  } else {
+    sendResponse(res, {
+      statusCode: httpStatus.NOT_FOUND,
+      success: false,
+      message: 'Academic faculty not found!',
+      data: result,
+    });
+  }
 });
 
 const updateAnAcademicFaculty = catchAsync(async (req, res) => {

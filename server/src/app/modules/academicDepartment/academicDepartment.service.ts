@@ -27,7 +27,6 @@ const updateAnAcademicDepartmentIntoDB = async (
       new: true,
     },
   );
-
   return result;
 };
 

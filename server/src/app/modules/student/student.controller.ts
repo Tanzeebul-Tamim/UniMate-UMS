@@ -27,12 +27,21 @@ const getAStudent = catchAsync(async (req, res) => {
   const { studentId } = req.params;
   const result = await StudentServices.getAStudentFromDB(studentId);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Student is retrieved successfully',
-    data: result,
-  });
+  if (result) {
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Student is retrieved successfully',
+      data: result,
+    });
+  } else {
+    sendResponse(res, {
+      statusCode: httpStatus.NOT_FOUND,
+      success: false,
+      message: 'Student not found!',
+      data: result,
+    });
+  }
 });
 
 const updateAStudent = catchAsync(async (req, res) => {

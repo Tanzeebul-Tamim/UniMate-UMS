@@ -59,25 +59,15 @@ academicSemesterSchema.pre('save', async function (next) {
   next();
 });
 
-// academicSemesterSchema.pre('findOne', async function (next) {
-//   const query = this.getQuery();
-//   const doesSemesterExist = await AcademicSemester.findOne(query);
+academicSemesterSchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
+  const doesSemesterExist = await AcademicSemester.findOne(query);
 
-//   if (!doesSemesterExist) {
-//     throw new Error('Semester not found');
-//   }
-//   next();
-// });
-
-// academicSemesterSchema.pre('findOneAndUpdate', async function (next) {
-//   const query = this.getQuery();
-//   const doesSemesterExist = await AcademicSemester.findOne(query);
-
-//   if (!doesSemesterExist) {
-//     throw new Error('Semester not found');
-//   }
-//   next();
-// });
+  if (!doesSemesterExist) {
+    throw new Error('Semester not found');
+  }
+  next();
+});
 
 export const AcademicSemester = model<TAcademicSemester>(
   'Academic_Semester',

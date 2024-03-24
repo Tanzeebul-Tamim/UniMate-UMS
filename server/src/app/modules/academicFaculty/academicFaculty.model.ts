@@ -26,25 +26,15 @@ academicFacultySchema.pre('save', async function (next) {
   next();
 });
 
-// academicFacultySchema.pre('findOne', async function (next) {
-//   const query = this.getQuery();
-//   const doesFacultyExist = await AcademicFaculty.findOne(query);
+academicFacultySchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
+  const doesFacultyExist = await AcademicFaculty.findOne(query);
 
-//   if (!doesFacultyExist) {
-//     throw new Error('Faculty not found');
-//   }
-//   next();
-// });
-
-// academicFacultySchema.pre('findOneAndUpdate', async function (next) {
-//   const query = this.getQuery();
-//   const doesFacultyExist = await AcademicFaculty.findOne(query);
-
-//   if (!doesFacultyExist) {
-//     throw new Error('Faculty not found');
-//   }
-//   next();
-// });
+  if (!doesFacultyExist) {
+    throw new Error('Faculty not found');
+  }
+  next();
+});
 
 export const AcademicFaculty = model<TAcademicFaculty>(
   'Academic_Faculty',

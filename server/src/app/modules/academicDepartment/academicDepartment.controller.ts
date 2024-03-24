@@ -43,12 +43,21 @@ const getAnAcademicDepartment = catchAsync(async (req, res) => {
       departmentId,
     );
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Academic department is retrieved successfully',
-    data: result,
-  });
+  if (result) {
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Academic department is retrieved successfully',
+      data: result,
+    });
+  } else {
+    sendResponse(res, {
+      statusCode: httpStatus.NOT_FOUND,
+      success: false,
+      message: 'Academic department not found!',
+      data: result,
+    });
+  }
 });
 
 const updateAnAcademicDepartment = catchAsync(async (req, res) => {
