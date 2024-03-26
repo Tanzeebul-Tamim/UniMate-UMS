@@ -2,19 +2,25 @@ import { TStudent } from './student.interface';
 import { Student } from './student.model';
 
 const getAllStudentFromDB = async () => {
-  const result = await Student.find();
+  const result = await Student.find()
+    .populate({ path: 'academicDepartment', select: 'name' })
+    .populate({ path: 'admissionSemester', select: 'name' });
   return result;
 };
 
 const getAStudentFromDB = async (id: string) => {
-  const result = await Student.findOne({ _id: id });
+  const result = await Student.findOne({ _id: id })
+    .populate({ path: 'academicDepartment', select: 'name' })
+    .populate({ path: 'admissionSemester', select: 'name' });
   return result;
 };
 
 const updateAStudentFromDB = async (id: string, payload: Partial<TStudent>) => {
   const result = await Student.findOneAndUpdate({ _id: id }, payload, {
     new: true,
-  });
+  })
+    .populate({ path: 'academicDepartment', select: 'name' })
+    .populate({ path: 'admissionSemester', select: 'name' });
   return result;
 };
 

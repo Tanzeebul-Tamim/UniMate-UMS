@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { TAcademicFacultyName } from '../academicFaculty/academicFaculty.interface';
 
 export type TAcademicDepartmentName =
   | 'Computer Science & Engineering'
@@ -25,4 +26,14 @@ export type TAcademicDepartmentName =
 export type TAcademicDepartment = {
   name: TAcademicDepartmentName;
   academicFaculty: Types.ObjectId;
+};
+
+export type TAcademicDepartmentNameFacultyMapper = {
+  // eslint-disable-next-line no-unused-vars
+  [key in TAcademicFacultyName]: TAcademicDepartmentName[];
+};
+
+export type TAlignmentValidationPayload = {
+  facultyName: TAcademicFacultyName;
+  departmentName: TAcademicDepartmentName;
 };

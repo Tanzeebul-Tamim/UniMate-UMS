@@ -178,6 +178,16 @@ studentSchema.pre('updateOne', function (next) {
   next();
 });
 
+studentSchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
+  const doesFacultyExist = await Student.findOne(query);
+
+  if (!doesFacultyExist) {
+    throw new Error('Student not found');
+  }
+  next();
+});
+
 //* creating a custom static method
 studentSchema.statics.doesUserExist = async function (id: string) {
   const existingUser = await Student.findOne({ id });
