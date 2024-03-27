@@ -13,6 +13,8 @@ import {
   Nationalities,
   Religions,
 } from './student.constant';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 const nameSchema = new Schema<TName>({
   firstName: {
@@ -180,10 +182,10 @@ studentSchema.pre('updateOne', function (next) {
 
 studentSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
-  const doesFacultyExist = await Student.findOne(query);
+  const doesStudentExist = await Student.findOne(query);
 
-  if (!doesFacultyExist) {
-    throw new Error('Student not found');
+  if (!doesStudentExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Student not found');
   }
   next();
 });

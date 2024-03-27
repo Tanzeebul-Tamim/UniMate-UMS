@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import config from '../../config';
 import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
@@ -6,6 +7,8 @@ import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import { generatedStudentID } from './user.utils';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   //* Create a user object
@@ -22,19 +25,46 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     payload.admissionSemester,
   );
 
-  //* Set auto-generated ID
-  userData.id = await generatedStudentID(admissionSemester as TAcademicSemester);
+  //* Start a session
+  const session = await mongoose.startSession();
 
-  //* Create a user
-  const newUser = await User.create(userData);
+  try {
+    //* Start a transaction
+    session.startTransaction();
 
-  //* Create a student
-  if (Object.keys(newUser).length) {
-    payload.id = newUser.id;
-    payload.user = newUser._id; // reference _id
+    //* Set auto-generated ID
+    userData.id = await generatedStudentID(
+      admissionSemester as TAcademicSemester,
+    );
 
-    const newStudent = await Student.create(payload);
+    //* Create an user (transaction-1)
+    // We'll get the newly created user as an array
+    const newUser = await User.create([userData], { session });
+
+    if (!newUser.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
+    }
+
+    //* Set id and _id as user
+    payload.id = newUser[0].id;
+    payload.user = newUser[0]._id; // reference _id
+
+    //* Create a student (transaction-2)
+    const newStudent = await Student.create([payload], { session });
+
+    if (!newStudent.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
+    }
+
+    //* Commit and end session after successful transactions
+    await session.commitTransaction();
+    await session.endSession();
+
     return newStudent;
+  } catch {
+    //* Abort and end session if transaction fails
+    await session.abortTransaction();
+    await session.endSession();
   }
 };
 
