@@ -22,7 +22,7 @@ const getAllStudentFromDB = async () => {
 };
 
 const getAStudentFromDB = async (id: string) => {
-  const result = await Student.findOne({ _id: id })
+  const result = await Student.findOne({ id })
     .populate({
       path: 'academicDepartment',
       populate: {
@@ -38,8 +38,65 @@ const getAStudentFromDB = async (id: string) => {
 };
 
 const updateAStudentFromDB = async (id: string, payload: Partial<TStudent>) => {
-  const result = await Student.findOneAndUpdate({ _id: id }, payload, {
+  const { name, guardian, localGuardian, ...remainingStudentData } = payload;
+  const modifiedPayload: Record<string, unknown> = { remainingStudentData };
+
+  if (name && Object.keys(name).length) {
+    for (const [key, value] of Object.entries(name)) {
+      modifiedPayload[`name.${key}`] = value;
+    }
+  }
+
+  if (guardian && Object.keys(guardian).length) {
+    for (const [guardianKey, guardianValue] of Object.entries(guardian)) {
+      if (
+        guardianValue &&
+        typeof guardianValue === 'object' &&
+        Object.keys(guardianValue).length
+      ) {
+        for (const [parentKey, parentValue] of Object.entries(guardianValue)) {
+          if (
+            parentValue &&
+            typeof parentValue === 'object' &&
+            Object.keys(parentValue).length
+          ) {
+            for (const [nameKey, nameValue] of Object.entries(parentValue)) {
+              modifiedPayload[
+                `guardian.${guardianKey}.${parentKey}.${nameKey}`
+              ] = nameValue;
+            }
+          } else if (parentValue && typeof parentValue === 'string') {
+            modifiedPayload[`guardian.${guardianKey}.${parentKey}`] =
+              parentValue;
+          }
+        }
+      }
+    }
+  }
+
+  if (localGuardian && Object.keys(localGuardian).length) {
+    for (const [localGuardianKey, localGuardianValue] of Object.entries(
+      localGuardian,
+    )) {
+      if (
+        localGuardianValue &&
+        typeof localGuardianValue === 'object' &&
+        Object.keys(localGuardianValue).length
+      ) {
+        for (const [nameKey, nameValue] of Object.entries(localGuardianValue)) {
+          modifiedPayload[`localGuardian.${localGuardianKey}.${nameKey}`] =
+            nameValue;
+        }
+      } else if (localGuardianValue && typeof localGuardianValue === 'string') {
+        modifiedPayload[`localGuardian.${localGuardianKey}`] =
+          localGuardianValue;
+      }
+    }
+  }
+
+  const result = await Student.findOneAndUpdate({ id }, modifiedPayload, {
     new: true,
+    runValidators: true,
   })
     .populate({
       path: 'academicDepartment',
@@ -82,7 +139,7 @@ const deleteAStudentFromDB = async (id: string) => {
     );
 
     if (!deletedUser) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete user');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student');
     }
 
     //* Commit and end session after successful transactions
@@ -90,11 +147,11 @@ const deleteAStudentFromDB = async (id: string) => {
     await session.endSession();
 
     return deletedStudent;
-
-  } catch {
+  } catch (err) {
     //* Abort and end session if transaction fails
     await session.abortTransaction();
     await session.endSession();
+    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student');
   }
 };
 
