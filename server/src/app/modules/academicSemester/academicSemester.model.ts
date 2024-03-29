@@ -58,7 +58,7 @@ academicSemesterSchema.pre('save', async function (next) {
   if (doesSemesterExist) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `${this.name}-${this.year} semester already exists`,
+      `${this.name}-${this.year} academic semester already exists`,
     );
   }
   next();
@@ -69,7 +69,7 @@ academicSemesterSchema.pre('findOneAndUpdate', async function (next) {
   const doesSemesterExist = await AcademicSemester.findOne(query);
 
   if (!doesSemesterExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Semester not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Academic semester not found');
   }
   next();
 });

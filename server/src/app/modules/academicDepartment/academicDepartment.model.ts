@@ -31,7 +31,7 @@ academicDepartmentSchema.pre('save', async function (next) {
   });
 
   if (doesDepartmentExist) {
-    throw new AppError(httpStatus.CONFLICT, `${this.name} department already exists`);
+    throw new AppError(httpStatus.CONFLICT, `${this.name} academic department already exists`);
   }
   next();
 });
@@ -41,7 +41,7 @@ academicDepartmentSchema.pre('findOneAndUpdate', async function (next) {
   const doesDepartmentExist = await AcademicDepartment.findOne(query);
 
   if (!doesDepartmentExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Department not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Academic department not found');
   }
   next();
 });

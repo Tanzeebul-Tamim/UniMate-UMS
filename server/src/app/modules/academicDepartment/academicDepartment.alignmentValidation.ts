@@ -10,7 +10,8 @@ export const createDepartmentFacultyValidation = (
     academicDepartmentNameFacultyMapper[payload.facultyName];
   if (correspondingDepartments?.includes(payload.departmentName)) {
     return true;
-  } else {
+  }
+  else {
     throw new Error(`Invalid faculty name '${payload.facultyName}'`);
   }
 };
