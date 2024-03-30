@@ -4,9 +4,29 @@ import { Student } from './student.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
+import { queryFields } from './student.constant';
 
-const getAllStudentFromDB = async () => {
-  const result = await Student.find()
+const getAllStudentFromDB = async (query: Record<string, unknown>) => {
+  const queryObj = { ...query }; //* Make a copy of the query
+
+  let searchTerm = '';
+
+  if (query?.searchTerm) {
+    searchTerm = query?.searchTerm as string;
+  }
+
+  const searchQuery = Student.find({
+    $or: queryFields.map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  });
+
+  //* Filter the query parameters
+  const excludeFields = ['searchTerm', 'sort'];
+  excludeFields.forEach((element) => delete queryObj[element]);
+
+  const filterQuery = searchQuery
+    .find(queryObj)
     .populate({
       path: 'academicDepartment',
       populate: {
@@ -18,7 +38,16 @@ const getAllStudentFromDB = async () => {
       path: 'admissionSemester',
       select: ['name', 'year', 'startMonth', 'endMonth'],
     });
-  return result;
+
+  let sort = '-createdAt';
+
+  if (query?.sort) {
+    sort = query?.sort as string;
+  }
+
+  const sortQuery = await filterQuery.sort(sort);
+
+  return sortQuery;
 };
 
 const getAStudentFromDB = async (id: string) => {

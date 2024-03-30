@@ -30,7 +30,7 @@ const getAllAcademicDepartments = catchAsync(async (__, res) => {
     sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
       success: false,
-      message: 'No academic departments recorded yet',
+      message: 'No academic departments found',
       data: result,
     });
   }

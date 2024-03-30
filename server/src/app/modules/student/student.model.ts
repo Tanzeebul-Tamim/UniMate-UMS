@@ -15,6 +15,8 @@ import {
 } from './student.constant';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
+import { AcademicSemester } from '../academicSemester/academicSemester.model';
+import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
 
 const nameSchema = new Schema<TName>({
   firstName: {
@@ -146,7 +148,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     },
     isDeleted: { type: Boolean, default: false },
   },
-  { toJSON: { virtuals: true } },
+  { timestamps: true, toJSON: { virtuals: true } },
 );
 
 //* virtual
@@ -160,6 +162,23 @@ studentSchema.virtual('fullName').get(function () {
 });
 
 //* Query middleware
+studentSchema.pre('save', async function (next) {
+  const isDepartmentValid = await AcademicDepartment.findOne({
+    _id: this.academicDepartment,
+  });
+
+  const isSemesterValid = await AcademicSemester.findOne({
+    _id: this.admissionSemester,
+  });
+
+  if (!isDepartmentValid) {
+    throw new AppError(httpStatus.CONFLICT, 'Invalid Academic-Department code');
+  } else if (!isSemesterValid) {
+    throw new AppError(httpStatus.CONFLICT, 'Invalid Academic-Semester code');
+  }
+  next();
+});
+
 studentSchema.pre('find', function (next) {
   this.find({ isDeleted: { $eq: false } });
   next();

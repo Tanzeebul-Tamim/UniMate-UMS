@@ -3,9 +3,9 @@ import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 
-const getAllStudents = catchAsync(async (__, res) => {
-  const result = await StudentServices.getAllStudentFromDB();
-
+const getAllStudents = catchAsync(async (req, res) => {
+  const query = req.query;
+  const result = await StudentServices.getAllStudentFromDB(query);
   if (result.length > 0) {
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -17,7 +17,7 @@ const getAllStudents = catchAsync(async (__, res) => {
     sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
       success: false,
-      message: 'No student recorded yet',
+      message: 'No student found',
       data: null,
     });
   }
