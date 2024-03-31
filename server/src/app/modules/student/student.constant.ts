@@ -52,7 +52,7 @@ export const Religions: TReligion[] = [
   'Zoroastrianism',
 ];
 
-export const queryFields = [
+export const StudentSearchableFields = [
   'name.firstName',
   'name.middleName',
   'name.lastName',
@@ -75,10 +75,10 @@ export const queryFields = [
   'localGuardian.name.firstName',
   'localGuardian.name.middleName',
   'localGuardian.name.lastName',
-  'localGuardian.name.occupation',
-  'localGuardian.name.contactNo',
-  'localGuardian.name.address',
-  'localGuardian.name.relationship',
+  'localGuardian.occupation',
+  'localGuardian.contactNo',
+  'localGuardian.address',
+  'localGuardian.relationship',
   'nationality',
   'religion',
 ];
