@@ -154,9 +154,9 @@ const studentSchema = new Schema<TStudent, StudentModel>(
 //* virtual
 studentSchema.virtual('fullName').get(function () {
   const name = this.name;
-  if (name.middleName) {
+  if (name && name?.middleName) {
     return name.firstName + ' ' + name?.middleName + ' ' + name.lastName;
-  } else if (!name.middleName) {
+  } else if (name && !name?.middleName) {
     return name.firstName + ' ' + name.lastName;
   }
 });
