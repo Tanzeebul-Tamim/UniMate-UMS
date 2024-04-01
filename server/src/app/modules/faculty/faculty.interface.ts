@@ -1,31 +1,33 @@
 import { Model, Types } from 'mongoose';
 import {
-  TBloodGroup,
-  TGender,
   TName,
+  TGender,
+  TBloodGroup,
   TNationality,
   TReligion,
 } from '../../interface/common';
 
-export type TIndividualGuardian = {
-  name: TName;
-  occupation: string;
-  contactNo: string;
-};
+export type TDesignation =
+  | 'professor'
+  | 'associate professor'
+  | 'assistant professor'
+  | 'lecturer'
+  | 'research professor'
+  | 'adjunct professor'
+  | 'visiting professor'
+  | 'dean'
+  | 'department chair'
+  | 'instructor'
+  | 'research associate'
+  | 'postdoctoral researcher'
+  | 'graduate assistant'
+  | 'teaching assistant'
+  | 'lab manager';
 
-export type TGuardian = {
-  father: TIndividualGuardian;
-  mother: TIndividualGuardian;
-};
-
-export type TLocalGuardian = TIndividualGuardian & {
-  address: string;
-  relationship: string;
-};
-
-export type TStudent = {
+export type TFaculty = {
   id: string;
   user: Types.ObjectId;
+  designation: TDesignation;
   name: TName;
   gender: TGender;
   dateOfBirth: Date;
@@ -35,18 +37,16 @@ export type TStudent = {
   bloodGroup?: TBloodGroup;
   presentAddress: string;
   permanentAddress: string;
-  guardian: TGuardian;
-  localGuardian: TLocalGuardian;
   profileImage?: string;
-  admissionSemester: Types.ObjectId;
   academicDepartment: Types.ObjectId;
+  joiningDate: Date;
   nationality: TNationality;
   religion: TReligion;
   isDeleted: boolean;
 };
 
 //* For creating static
-export interface StudentModel extends Model<TStudent> {
+export interface FacultyModel extends Model<TFaculty> {
   // eslint-disable-next-line no-unused-vars
-  doesUserExist(id: string): Promise<TStudent | null>;
+  doesUserExist(id: string): Promise<TFaculty | null>;
 }

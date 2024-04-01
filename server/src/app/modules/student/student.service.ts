@@ -7,7 +7,7 @@ import { User } from '../user/user.model';
 import { StudentSearchableFields } from './student.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
 
-const getAllStudentFromDB = async (query: Record<string, unknown>) => {
+const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(Student.find(), query)
     .search(StudentSearchableFields)
     .filter()
@@ -168,7 +168,7 @@ const deleteAStudentFromDB = async (id: string) => {
 };
 
 export const StudentServices = {
-  getAllStudentFromDB,
+  getAllStudentsFromDB,
   getAStudentFromDB,
   updateAStudentFromDB,
   deleteAStudentFromDB,

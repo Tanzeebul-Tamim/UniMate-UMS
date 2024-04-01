@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 import { TUser } from './user.interface';
 import config from '../../config';
 import bcrypt from 'bcrypt';
+import { Statuses } from './user.constant';
 
 const userSchema = new Schema<TUser>(
   {
@@ -20,10 +21,10 @@ const userSchema = new Schema<TUser>(
     role: { type: String, enum: ['admin', 'student', 'faculty'] },
     status: {
       type: String,
-      enum: ['in-progress', 'blocked'],
+      enum: Statuses,
       default: 'in-progress',
     },
-    isDeleted: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: true },
   },
   { timestamps: true },
 );
@@ -34,10 +35,17 @@ userSchema.pre('save', async function (next) {
   const user = this; // document
 
   //* hashing password and saving to database
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds),
-  );
+  if (user.password) {
+    if (user.password !== config.default_pass) {
+      user.needsPasswordChange = false;
+    }
+
+    user.password = await bcrypt.hash(
+      user.password,
+      Number(config.bcrypt_salt_rounds),
+    );
+  }
+
   next();
 });
 

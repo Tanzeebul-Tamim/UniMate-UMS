@@ -7,32 +7,12 @@ import {
   createNameValidationSchema,
   updateNameValidationSchema,
 } from '../../constant/common';
+import { Designations } from './faculty.constant';
 
-//! For creating student
+//! For creating faculty
 
-//* Define Zod schemas for individual types
-const createIndividualGuardianValidationSchema = z.object({
-  name: createNameValidationSchema,
-  occupation: z.string().min(1).trim(),
-  contactNo: z.string().min(1).trim(),
-});
-
-const createLocalGuardianValidationSchema =
-  createIndividualGuardianValidationSchema.merge(
-    z.object({
-      address: z.string().min(1).trim(),
-      relationship: z.string().min(1).trim(),
-    }),
-  );
-
-//* Define the schema for the TGuardian type
-const createGuardianValidationSchema = z.object({
-  father: createIndividualGuardianValidationSchema,
-  mother: createIndividualGuardianValidationSchema,
-});
-
-//* Define the schema for the TStudent type
-export const createStudentValidationSchema = z.object({
+//* Define the schema for the TFaculty type
+export const createFacultyValidationSchema = z.object({
   body: z.object({
     password: z
       .string()
@@ -51,7 +31,8 @@ export const createStudentValidationSchema = z.object({
         message: 'Password must contain at least one special character',
       })
       .optional(),
-    student: z.object({
+    faculty: z.object({
+      designation: z.enum([...Designations] as [string, ...string[]]),
       name: createNameValidationSchema,
       gender: z.enum([...Genders] as [string, ...string[]]),
       dateOfBirth: z.string(),
@@ -61,10 +42,8 @@ export const createStudentValidationSchema = z.object({
       bloodGroup: z.enum([...BloodGroups] as [string, ...string[]]).optional(),
       presentAddress: z.string().min(1),
       permanentAddress: z.string().min(1),
-      guardian: createGuardianValidationSchema,
-      localGuardian: createLocalGuardianValidationSchema,
       profileImage: z.string().optional(),
-      admissionSemester: z.string(),
+      joiningDate: z.string(),
       academicDepartment: z.string(),
       nationality: z.enum([...Nationalities] as [string, ...string[]]),
       religion: z.enum([...Religions] as [string, ...string[]]),
@@ -73,33 +52,15 @@ export const createStudentValidationSchema = z.object({
   }),
 });
 
-//! For updating student
+//! For updating faculty
 
-//* Define Zod schemas for individual types
-const updateIndividualGuardianValidationSchema = z.object({
-  name: updateNameValidationSchema.optional(),
-  occupation: z.string().min(1).trim().optional(),
-  contactNo: z.string().min(1).trim().optional(),
-});
-
-const updateLocalGuardianValidationSchema =
-  updateIndividualGuardianValidationSchema.merge(
-    z.object({
-      address: z.string().min(1).trim().optional(),
-      relationship: z.string().min(1).trim().optional(),
-    }),
-  );
-
-//* Define the schema for the TGuardian type
-const updateGuardianValidationSchema = z.object({
-  father: updateIndividualGuardianValidationSchema.optional(),
-  mother: updateIndividualGuardianValidationSchema.optional(),
-});
-
-//* Define the schema for the TStudent type
-export const updateStudentValidationSchema = z.object({
+//* Define the schema for the TFaculty type
+export const updateFacultyValidationSchema = z.object({
   body: z.object({
-    student: z.object({
+    faculty: z.object({
+      designation: z
+        .enum([...Designations] as [string, ...string[]])
+        .optional(),
       name: updateNameValidationSchema.optional(),
       gender: z.enum([...Genders] as [string, ...string[]]).optional(),
       dateOfBirth: z.string().optional(),
@@ -109,10 +70,8 @@ export const updateStudentValidationSchema = z.object({
       bloodGroup: z.enum([...BloodGroups] as [string, ...string[]]).optional(),
       presentAddress: z.string().min(1).optional(),
       permanentAddress: z.string().min(1).optional(),
-      guardian: updateGuardianValidationSchema.optional(),
-      localGuardian: updateLocalGuardianValidationSchema.optional(),
       profileImage: z.string().optional(),
-      admissionSemester: z.string().optional(),
+      joiningDate: z.string().optional(),
       academicDepartment: z.string().optional(),
       nationality: z
         .enum([...Nationalities] as [string, ...string[]])
@@ -122,7 +81,7 @@ export const updateStudentValidationSchema = z.object({
   }),
 });
 
-export const studentValidation = {
-  createStudentValidationSchema,
-  updateStudentValidationSchema,
+export const facultyValidation = {
+  createFacultyValidationSchema,
+  updateFacultyValidationSchema,
 };

@@ -1,4 +1,4 @@
-import { FilterQuery, Query } from 'mongoose';
+  import { FilterQuery, Query } from 'mongoose';
 
 //! Find the raw version on 28th commit on student.service.ts
 

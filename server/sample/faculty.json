@@ -1,0 +1,20 @@
+{
+  "designation": "lecturer",
+  "name": {
+    "firstName": "David",
+    "middleName": "John",
+    "lastName": "Doe"
+  },
+  "gender": "male",
+  "dateOfBirth": "1995-05-12",
+  "email": "doe@gmail.com",
+  "contactNo": "+525512345678",
+  "emergencyContactNo": "+525512345678",
+  "presentAddress": "Mexico City",
+  "permanentAddress": "Puebla",
+  "profileImage": "www.profileImage.com",
+  "academicDepartment": "65fdb5a9636d39483a9f2b6b",
+  "joiningDate": "2005-04-13",
+  "nationality": "Mexican",
+  "religion": "Christianity"
+}
