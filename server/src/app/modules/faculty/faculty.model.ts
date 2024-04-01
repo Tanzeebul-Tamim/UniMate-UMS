@@ -18,6 +18,7 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: [true, 'User is required'],
     },
     designation: {
       type: String,
@@ -26,6 +27,7 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
         message:
           '{VALUE} is an invalid designation. Please choose a valid designation',
       },
+      required: [true, 'Designation is required'],
     },
     name: { type: nameSchema, required: [true, 'Name is required'] },
     gender: {
@@ -63,6 +65,7 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
         message:
           "{VALUE} is an invalid blood group. The blood group field can only be one of the following: 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'",
       },
+      required: [true, 'Blood group is required'],
     },
     presentAddress: {
       type: String,
@@ -72,10 +75,14 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
       type: String,
       required: [true, 'Permanent address is required'],
     },
-    profileImage: { type: String },
+    profileImage: {
+      type: String,
+      required: [true, 'Profile image is required'],
+    },
     academicDepartment: {
       type: Schema.Types.ObjectId,
       ref: 'Academic_Department',
+      required: [true, 'Academic department is required'],
     },
     joiningDate: { type: Date, required: [true, 'Joining date is required'] },
     nationality: {
@@ -85,6 +92,7 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
         message:
           '{VALUE} is an invalid nationality. Please choose a valid nationality.',
       },
+      required: [true, 'Nationality is required'],
     },
     religion: {
       type: String,
@@ -93,6 +101,7 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
         message:
           '{VALUE} is an invalid religion. Please choose a valid religion.',
       },
+      required: [true, 'Religion is required'],
     },
     isDeleted: { type: Boolean, default: false },
   },
@@ -117,7 +126,7 @@ facultySchema.pre('save', async function (next) {
 
   if (!isDepartmentValid) {
     throw new AppError(httpStatus.CONFLICT, 'Invalid academic department');
-  } 
+  }
 
   next();
 });

@@ -66,3 +66,32 @@ export const generatedFacultyID = async (payload: Date): Promise<string> => {
 
   return incrementedID;
 };
+
+//! For admin ID generation
+
+//* Find the Admin ID of the last joined admin
+const findLastJoinedAdminID = async () => {
+  const lastAdmin = await User.findOne({ role: 'admin' }, { id: 1, _id: 0 })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return lastAdmin?.id ? lastAdmin.id : undefined;
+};
+
+//* Generate faculty ID which consists of the letter "F" along with joining year, month & 4 digit serial number
+export const generatedAdminID = async (payload: Date): Promise<string> => {
+  let currentID = (0).toString().padStart(4, '0');
+
+  const lastAdminId = await findLastJoinedAdminID();
+  const currentYear = payload.toString().substring(0, 4);
+  const currentMonth = payload.toString().substring(5, 7);
+
+  if (lastAdminId) {
+    currentID = lastAdminId.substring(8);
+  }
+
+  let incrementedID = (parseInt(currentID) + 1).toString().padStart(4, '0');
+  incrementedID = `A-${currentYear}${currentMonth}${incrementedID}`;
+
+  return incrementedID;
+};

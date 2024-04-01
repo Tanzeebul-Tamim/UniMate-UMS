@@ -32,12 +32,12 @@ export type TStudent = {
   email: string;
   contactNo: string;
   emergencyContactNo: string;
-  bloodGroup?: TBloodGroup;
+  bloodGroup: TBloodGroup;
   presentAddress: string;
   permanentAddress: string;
   guardian: TGuardian;
   localGuardian: TLocalGuardian;
-  profileImage?: string;
+  profileImage: string;
   admissionSemester: Types.ObjectId;
   academicDepartment: Types.ObjectId;
   nationality: TNationality;

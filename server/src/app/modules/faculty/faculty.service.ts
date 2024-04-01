@@ -81,7 +81,7 @@ const deleteAFacultyFromDB = async (id: string) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete faculty');
     }
 
-    //* Delete an user (transaction-2)
+    //* Delete the corresponding user (transaction-2)
     const deletedUser = await User.findOneAndUpdate(
       { id },
       { isDeleted: true },

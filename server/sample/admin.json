@@ -1,0 +1,20 @@
+{
+  "designation": "system administrator",
+  "name": {
+    "firstName": "Jane",
+    "middleName": "Germy",
+    "lastName": "Smith"
+  },
+  "gender": "female",
+  "dateOfBirth": "1999-02-02",
+  "email": "jane@gmail.com",
+  "contactNo": "+525512345673",
+  "emergencyContactNo": "+525512345645",
+  "bloodGroup": "B+",
+  "presentAddress": "Mexico City",
+  "permanentAddress": "Puebla",
+  "profileImage": "www.profileImage.com",
+  "joiningDate": "2005-04-13",
+  "nationality": "Mexican",
+  "religion": "Jainism"
+}

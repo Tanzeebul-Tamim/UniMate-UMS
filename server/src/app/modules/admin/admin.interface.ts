@@ -8,23 +8,17 @@ import {
 } from '../../interface/common';
 
 export type TDesignation =
-  | 'professor'
-  | 'associate professor'
-  | 'assistant professor'
-  | 'lecturer'
-  | 'research professor'
-  | 'adjunct professor'
-  | 'visiting professor'
-  | 'dean'
-  | 'department chair'
-  | 'instructor'
-  | 'research associate'
-  | 'postdoctoral researcher'
-  | 'graduate assistant'
-  | 'teaching assistant'
-  | 'lab manager';
+  | 'system administrator'
+  | 'database administrator'
+  | 'network administrator'
+  | 'security administrator'
+  | 'IT administrator'
+  | 'academic administrator'
+  | 'admissions administrator'
+  | 'finance administrator'
+  | 'registrar';
 
-export type TFaculty = {
+export type TAdmin = {
   id: string;
   user: Types.ObjectId;
   designation: TDesignation;
@@ -38,7 +32,6 @@ export type TFaculty = {
   presentAddress: string;
   permanentAddress: string;
   profileImage: string;
-  academicDepartment: Types.ObjectId;
   joiningDate: Date;
   nationality: TNationality;
   religion: TReligion;
@@ -46,7 +39,7 @@ export type TFaculty = {
 };
 
 //* For creating static
-export interface FacultyModel extends Model<TFaculty> {
+export interface AdminModel extends Model<TAdmin> {
   // eslint-disable-next-line no-unused-vars
-  doesUserExist(id: string): Promise<TFaculty | null>;
+  doesUserExist(id: string): Promise<TAdmin | null>;
 }

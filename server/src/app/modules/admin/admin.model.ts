@@ -1,15 +1,7 @@
 import { Schema, model } from 'mongoose';
-import {
-  StudentModel,
-  TGuardian,
-  TIndividualGuardian,
-  TLocalGuardian,
-  TStudent,
-} from './student.interface';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
-import { AcademicSemester } from '../academicSemester/academicSemester.model';
-import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
+import { AdminModel, TAdmin } from './admin.interface';
 import {
   BloodGroups,
   Genders,
@@ -17,39 +9,24 @@ import {
   Religions,
   nameSchema,
 } from '../../constant/common';
+import { Designations } from './admin.constant';
 
-const individualGuardianSchema = new Schema<TIndividualGuardian>({
-  name: { type: nameSchema, required: [true, 'Name is required'] },
-  occupation: { type: String, required: [true, 'Occupation is required'] },
-  contactNo: { type: String, required: [true, 'Contact no is required'] },
-});
-
-const guardianSchema = new Schema<TGuardian>({
-  father: {
-    type: individualGuardianSchema,
-    required: [true, "Father's information is required"],
-  },
-  mother: {
-    type: individualGuardianSchema,
-    required: [true, "Mother's information is required"],
-  },
-});
-
-const localGuardianSchema = new Schema<TLocalGuardian>({
-  name: { type: nameSchema, required: [true, 'Name is required'] },
-  occupation: { type: String, required: [true, 'Occupation is required'] },
-  contactNo: { type: String, required: [true, 'Contact no is required'] },
-  address: { type: String, required: [true, 'Address is required'] },
-  relationship: { type: String, required: [true, 'Relationship is required'] },
-});
-
-const studentSchema = new Schema<TStudent, StudentModel>(
+const adminSchema = new Schema<TAdmin, AdminModel>(
   {
     id: { type: String, required: [true, 'ID is required'], unique: true },
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: [true, 'User is required'],
+    },
+    designation: {
+      type: String,
+      enum: {
+        values: Designations,
+        message:
+          '{VALUE} is an invalid designation. Please choose a valid designation',
+      },
+      required: [true, 'Designation is required'],
     },
     name: { type: nameSchema, required: [true, 'Name is required'] },
     gender: {
@@ -97,28 +74,11 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: String,
       required: [true, 'Permanent address is required'],
     },
-    guardian: {
-      type: guardianSchema,
-      required: [true, 'Guardian is required'],
-    },
-    localGuardian: {
-      type: localGuardianSchema,
-      required: [true, 'Local guardian is required'],
-    },
     profileImage: {
       type: String,
       required: [true, 'Profile image is required'],
     },
-    admissionSemester: {
-      type: Schema.Types.ObjectId,
-      ref: 'Academic_Semester',
-      required: [true, 'Admission semester is required'],
-    },
-    academicDepartment: {
-      type: Schema.Types.ObjectId,
-      ref: 'Academic_Department',
-      required: [true, 'Academic department is required'],
-    },
+    joiningDate: { type: Date, required: [true, 'Joining date is required'] },
     nationality: {
       type: String,
       enum: {
@@ -143,7 +103,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
 );
 
 //* virtual
-studentSchema.virtual('fullName').get(function () {
+adminSchema.virtual('fullName').get(function () {
   const name = this.name;
   if (name && name?.middleName) {
     return name.firstName + ' ' + name?.middleName + ' ' + name.lastName;
@@ -153,59 +113,41 @@ studentSchema.virtual('fullName').get(function () {
 });
 
 //* Query middleware
-studentSchema.pre('save', async function (next) {
-  const isDepartmentValid = await AcademicDepartment.findOne({
-    _id: this.academicDepartment,
-  });
-
-  const isSemesterValid = await AcademicSemester.findOne({
-    _id: this.admissionSemester,
-  });
-
-  if (!isDepartmentValid) {
-    throw new AppError(httpStatus.CONFLICT, 'Invalid academic department');
-  } else if (!isSemesterValid) {
-    throw new AppError(httpStatus.CONFLICT, 'Invalid academic semester');
-  }
-
-  next();
-});
-
-studentSchema.pre('find', function (next) {
+adminSchema.pre('find', function (next) {
   this.find({ isDeleted: { $eq: false } });
   next();
 });
 
-studentSchema.pre('findOne', async function (next) {
+adminSchema.pre('findOne', async function (next) {
   this.findOne({ isDeleted: { $eq: false } });
   next();
 });
 
-studentSchema.pre('findOneAndUpdate', function (next) {
+adminSchema.pre('findOneAndUpdate', function (next) {
   this.find({ isDeleted: { $eq: false } });
   next();
 });
 
-studentSchema.pre('updateOne', function (next) {
+adminSchema.pre('updateOne', function (next) {
   this.find({ isDeleted: { $eq: false } });
   next();
 });
 
-studentSchema.pre('findOneAndUpdate', async function (next) {
+adminSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
-  const doesStudentExist = await Student.findOne(query);
+  const doesAdminExist = await Admin.findOne(query);
 
-  if (!doesStudentExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Student not found');
+  if (!doesAdminExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Admin not found');
   }
 
   next();
 });
 
 //* creating a custom static method
-studentSchema.statics.doesUserExist = async function (id: string) {
-  const existingUser = await Student.findOne({ id });
+adminSchema.statics.doesUserExist = async function (id: string) {
+  const existingUser = await Admin.findOne({ id });
   return existingUser;
 };
 
-export const Student = model<TStudent, StudentModel>('Student', studentSchema);
+export const Admin = model<TAdmin, AdminModel>('Admin', adminSchema);

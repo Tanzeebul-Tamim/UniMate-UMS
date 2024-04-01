@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 import { TUser } from './user.interface';
 import config from '../../config';
 import bcrypt from 'bcrypt';
-import { Statuses } from './user.constant';
+import { Roles, Statuses } from './user.constant';
 
 const userSchema = new Schema<TUser>(
   {
@@ -17,12 +17,21 @@ const userSchema = new Schema<TUser>(
       maxlength: [20, 'Password cannot be longer 20 characters'],
       minlength: [6, 'Password must be at least 6 characters long'],
     },
-    needsPasswordChange: { type: Boolean, default: true },
-    role: { type: String, enum: ['admin', 'student', 'faculty'] },
+    needsPasswordChange: {
+      type: Boolean,
+      default: true,
+      required: [true, 'Needs password change is required'],
+    },
+    role: {
+      type: String,
+      enum: Roles,
+      required: [true, 'Role is required'],
+    },
     status: {
       type: String,
       enum: Statuses,
       default: 'in-progress',
+      required: [true, 'Status is required'],
     },
     isDeleted: { type: Boolean, default: true },
   },
