@@ -43,3 +43,5 @@ for (let i = 0; i < AcademicFacultyNames.length; i++) {
   startIndex += 4;
   endIndex += 4;
 }
+
+export const AcademicDepartmentSearchableFields = ['name'];

@@ -1,3 +1,4 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import {
   createNameCodeValidation,
   createNameMonthValidation,
@@ -5,6 +6,7 @@ import {
   updateNameCodeValidation,
   updateNameMonthValidation,
 } from './academicSemester.alignmentValidation';
+import { AcademicSemesterSearchableFields } from './academicSemester.constant';
 import { TAcademicSemester } from './academicSemester.interface';
 import { AcademicSemester } from './academicSemester.model';
 
@@ -13,11 +15,22 @@ const createAcademicSemesterIntoDB = async (payload: TAcademicSemester) => {
   createNameMonthValidation(payload);
 
   const result = await AcademicSemester.create(payload);
+
   return result;
 };
 
-const getAllAcademicSemestersFromDB = async () => {
-  const result = await AcademicSemester.find();
+const getAllAcademicSemestersFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const academicSemesterQuery = new QueryBuilder(AcademicSemester.find(), query)
+    .search(AcademicSemesterSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await academicSemesterQuery.modelQuery;
+
   return result;
 };
 

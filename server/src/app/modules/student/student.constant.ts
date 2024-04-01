@@ -4,6 +4,8 @@ import {
   TNationality,
   TReligion,
 } from './student.interface';
+import sampleStudent from '../../../../sample/student.json';
+import { generateSearchableFields } from '../../utils/generateSearchableFields';
 
 export const Genders: TGender[] = ['male', 'female', 'others'];
 
@@ -52,33 +54,13 @@ export const Religions: TReligion[] = [
   'Zoroastrianism',
 ];
 
-export const StudentSearchableFields = [
-  'name.firstName',
-  'name.middleName',
-  'name.lastName',
-  'gender',
-  'email',
-  'contactNo',
-  'emergencyContactNo',
-  'presentAddress',
-  'permanentAddress',
-  'guardian.father.name.firstName',
-  'guardian.father.name.middleName',
-  'guardian.father.name.lastName',
-  'guardian.father.occupation',
-  'guardian.father.contactNo',
-  'guardian.mother.name.firstName',
-  'guardian.mother.name.middleName',
-  'guardian.mother.name.lastName',
-  'guardian.mother.occupation',
-  'guardian.mother.contactNo',
-  'localGuardian.name.firstName',
-  'localGuardian.name.middleName',
-  'localGuardian.name.lastName',
-  'localGuardian.occupation',
-  'localGuardian.contactNo',
-  'localGuardian.address',
-  'localGuardian.relationship',
-  'nationality',
-  'religion',
+const studentFields = generateSearchableFields(sampleStudent);
+const fieldsToRemove = [
+  'dateOfBirth',
+  'profileImage',
+  'admissionSemester',
+  'academicDepartment',
 ];
+export const StudentSearchableFields = studentFields.filter(
+  (field) => !fieldsToRemove.includes(field),
+);

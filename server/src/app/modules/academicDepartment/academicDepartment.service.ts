@@ -1,5 +1,7 @@
+import QueryBuilder from '../../builder/QueryBuilder';
 import { AcademicFaculty } from '../academicFaculty/academicFaculty.model';
 import { createDepartmentFacultyValidation } from './academicDepartment.alignmentValidation';
+import { AcademicDepartmentSearchableFields } from './academicDepartment.constant';
 import { TAcademicDepartment } from './academicDepartment.interface';
 import { AcademicDepartment } from './academicDepartment.model';
 
@@ -23,8 +25,20 @@ const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
   }
 };
 
-const getAllAcademicDepartmentsFromDB = async () => {
-  const result = await AcademicDepartment.find().populate({
+const getAllAcademicDepartmentsFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const academicDepartmentQuery = new QueryBuilder(
+    AcademicDepartment.find(),
+    query,
+  )
+    .search(AcademicDepartmentSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await academicDepartmentQuery.modelQuery.populate({
     path: 'academicFaculty',
     select: 'name',
   });

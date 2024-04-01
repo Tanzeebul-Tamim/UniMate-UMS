@@ -16,8 +16,9 @@ const createAcademicFaculty = catchAsync(async (req, res) => {
   });
 });
 
-const getAllAcademicFaculties = catchAsync(async (__, res) => {
-  const result = await AcademicFacultyServices.getAllAcademicFacultiesFromDB();
+const getAllAcademicFaculties = catchAsync(async (req, res) => {
+  const query = req.query;
+  const result = await AcademicFacultyServices.getAllAcademicFacultiesFromDB(query);
 
   if (result.length > 0) {
     sendResponse(res, {

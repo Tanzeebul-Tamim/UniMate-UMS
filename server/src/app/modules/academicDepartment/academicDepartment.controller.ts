@@ -15,9 +15,10 @@ const createAcademicDepartment = catchAsync(async (req, res) => {
   });
 });
 
-const getAllAcademicDepartments = catchAsync(async (__, res) => {
+const getAllAcademicDepartments = catchAsync(async (req, res) => {
+  const query = req.query;
   const result =
-    await AcademicDepartmentServices.getAllAcademicDepartmentsFromDB();
+    await AcademicDepartmentServices.getAllAcademicDepartmentsFromDB(query);
 
   if (result.length > 0) {
     sendResponse(res, {

@@ -15,7 +15,18 @@ const getAllStudentFromDB = async (query: Record<string, unknown>) => {
     .paginate()
     .fields();
 
-  const result = await studentQuery.modelQuery;
+  const result = await studentQuery.modelQuery
+    .populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+        select: 'name',
+      },
+    })
+    .populate({
+      path: 'admissionSemester',
+      select: ['name', 'year', 'startMonth', 'endMonth'],
+    });
 
   return result;
 };
@@ -33,6 +44,7 @@ const getAStudentFromDB = async (id: string) => {
       path: 'admissionSemester',
       select: ['name', 'year', 'startMonth', 'endMonth'],
     });
+
   return result;
 };
 
@@ -108,6 +120,7 @@ const updateAStudentFromDB = async (id: string, payload: Partial<TStudent>) => {
       path: 'admissionSemester',
       select: ['name', 'year', 'startMonth', 'endMonth'],
     });
+
   return result;
 };
 

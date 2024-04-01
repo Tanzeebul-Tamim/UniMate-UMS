@@ -53,3 +53,5 @@ export const academicSemesterCodeMonthMapper: TAcademicSemesterCodeMonthMapper =
     '02': ['May', 'August'],
     '03': ['September', 'December'],
   };
+
+export const AcademicSemesterSearchableFields = ['name', 'year'];

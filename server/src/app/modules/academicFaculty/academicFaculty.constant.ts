@@ -7,3 +7,5 @@ export const AcademicFacultyNames: TAcademicFacultyName[] = [
   'Faculty of Social Sciences',
   'Faculty of Arts & Humanities',
 ];
+
+export const AcademicFacultySearchableFields = ['name'];

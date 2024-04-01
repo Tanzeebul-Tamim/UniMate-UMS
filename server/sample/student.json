@@ -1,0 +1,50 @@
+{
+  "name": {
+    "firstName": "David",
+    "middleName": "John",
+    "lastName": "Doe"
+  },
+  "gender": "male",
+  "dateOfBirth": "1995-05-12",
+  "email": "doe@gmail.com",
+  "contactNo": "",
+  "emergencyContactNo": "+525512345678",
+  "presentAddress": "Mexico City",
+  "permanentAddress": "Puebla",
+  "guardian": {
+    "father": {
+      "name": {
+        "firstName": "John",
+        "middleName": "Doe",
+        "lastName": "Sr"
+      },
+      "occupation": "Service Holder",
+      "contactNo": "+525512345678"
+    },
+    "mother": {
+      "name": {
+        "firstName": "Mary",
+        "middleName": "John",
+        "lastName": "Doe"
+      },
+      "occupation": "Housewife",
+      "contactNo": "+525512345678"
+    }
+  },
+  "localGuardian": {
+    "name": {
+      "firstName": "Uncle",
+      "middleName": "John",
+      "lastName": "Doe"
+    },
+    "occupation": "Engineer",
+    "contactNo": "+525512345678",
+    "address": "Tijuana",
+    "relationship": "maternal uncle"
+  },
+  "profileImage": "www.profileImage.com",
+  "admissionSemester": "65fdb289fec4a5b4db9cea9d",
+  "academicDepartment": "65fdb5a9636d39483a9f2b6b",
+  "nationality": "Mexican",
+  "religion": "Christianity"
+}
