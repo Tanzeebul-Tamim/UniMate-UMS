@@ -81,9 +81,10 @@ export const createNameValidationSchema = z.object({
   lastName: z.string().min(1).max(20).trim(),
 });
 
-
 export const updateNameValidationSchema = z.object({
   firstName: z.string().min(1).max(20).trim().optional(),
   middleName: z.string().min(1).max(20).trim().optional(),
   lastName: z.string().min(1).max(20).trim().optional(),
 });
+
+export const currentYear = new Date().getFullYear();

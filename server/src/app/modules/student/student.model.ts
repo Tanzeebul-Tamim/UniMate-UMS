@@ -154,13 +154,13 @@ studentSchema.virtual('fullName').get(function () {
 
 //* Query middleware
 studentSchema.pre('save', async function (next) {
-  const isDepartmentValid = await AcademicDepartment.findOne({
-    _id: this.academicDepartment,
-  });
+  const isDepartmentValid = await AcademicDepartment.findById(
+    this.academicDepartment,
+  );
 
-  const isSemesterValid = await AcademicSemester.findOne({
-    _id: this.admissionSemester,
-  });
+  const isSemesterValid = await AcademicSemester.findById(
+    this.academicDepartment,
+  );
 
   if (!isDepartmentValid) {
     throw new AppError(httpStatus.CONFLICT, 'Invalid academic department');

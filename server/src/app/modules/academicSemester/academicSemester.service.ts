@@ -1,18 +1,17 @@
 import QueryBuilder from '../../builder/QueryBuilder';
 import {
-  createNameCodeValidation,
-  createNameMonthValidation,
-  updateCodeMonthValidation,
-  updateNameCodeValidation,
-  updateNameMonthValidation,
-} from './academicSemester.alignmentValidation';
+  checkFieldsValidator,
+  createNameCodeValidator,
+  createNameMonthValidator,
+  updateWithValidInfo,
+} from './academicSemester.utils';
 import { AcademicSemesterSearchableFields } from './academicSemester.constant';
 import { TAcademicSemester } from './academicSemester.interface';
 import { AcademicSemester } from './academicSemester.model';
 
 const createAcademicSemesterIntoDB = async (payload: TAcademicSemester) => {
-  createNameCodeValidation(payload);
-  createNameMonthValidation(payload);
+  createNameCodeValidator(payload);
+  createNameMonthValidator(payload);
 
   const result = await AcademicSemester.create(payload);
 
@@ -35,7 +34,7 @@ const getAllAcademicSemestersFromDB = async (
 };
 
 const getAnAcademicSemesterFromDB = async (id: string) => {
-  const result = await AcademicSemester.findOne({ _id: id });
+  const result = await AcademicSemester.findById(id);
   return result;
 };
 
@@ -43,11 +42,14 @@ const updateAnAcademicSemesterIntoDB = async (
   id: string,
   payload: Partial<TAcademicSemester>,
 ) => {
-  updateNameCodeValidation(payload);
-  updateNameMonthValidation(payload);
-  updateCodeMonthValidation(payload);
+  checkFieldsValidator(payload);
+  const getSemesterInfo = (await AcademicSemester.findById(
+    id,
+  )) as TAcademicSemester;
 
-  const result = await AcademicSemester.findOneAndUpdate({ _id: id }, payload, {
+  const updatedSemester = updateWithValidInfo(payload, getSemesterInfo);
+
+  const result = await AcademicSemester.findByIdAndUpdate(id, updatedSemester, {
     new: true,
   });
 

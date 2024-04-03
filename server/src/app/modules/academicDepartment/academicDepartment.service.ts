@@ -1,14 +1,12 @@
 import QueryBuilder from '../../builder/QueryBuilder';
 import { AcademicFaculty } from '../academicFaculty/academicFaculty.model';
-import { createDepartmentFacultyValidation } from './academicDepartment.alignmentValidation';
+import { createDepartmentFacultyValidation } from './academicDepartment.utils';
 import { AcademicDepartmentSearchableFields } from './academicDepartment.constant';
 import { TAcademicDepartment } from './academicDepartment.interface';
 import { AcademicDepartment } from './academicDepartment.model';
 
 const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
-  const academicFaculty = await AcademicFaculty.findOne({
-    _id: payload.academicFaculty,
-  });
+  const academicFaculty = await AcademicFaculty.findById(payload.academicFaculty);
 
   if (academicFaculty) {
     const departmentFacultyValidation = createDepartmentFacultyValidation({
@@ -46,7 +44,7 @@ const getAllAcademicDepartmentsFromDB = async (
 };
 
 const getAnAcademicDepartmentFromDB = async (id: string) => {
-  const result = await AcademicDepartment.findOne({ _id: id }).populate({
+  const result = await AcademicDepartment.findById(id).populate({
     path: 'academicFaculty',
     select: 'name',
   });
@@ -57,13 +55,9 @@ const updateAnAcademicDepartmentIntoDB = async (
   id: string,
   payload: Partial<TAcademicDepartment>,
 ) => {
-  const result = await AcademicDepartment.findOneAndUpdate(
-    { _id: id },
-    payload,
-    {
-      new: true,
-    },
-  ).populate({
+  const result = await AcademicDepartment.findByIdAndUpdate(id, payload, {
+    new: true,
+  }).populate({
     path: 'academicFaculty',
     select: 'name',
   });

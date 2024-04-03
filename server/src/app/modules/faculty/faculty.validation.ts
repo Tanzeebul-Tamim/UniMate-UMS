@@ -5,6 +5,7 @@ import {
   Nationalities,
   Religions,
   createNameValidationSchema,
+  currentYear,
   updateNameValidationSchema,
 } from '../../constant/common';
 import { Designations } from './faculty.constant';
@@ -35,7 +36,16 @@ export const createFacultyValidationSchema = z.object({
       designation: z.enum([...Designations] as [string, ...string[]]),
       name: createNameValidationSchema,
       gender: z.enum([...Genders] as [string, ...string[]]),
-      dateOfBirth: z.string(),
+      dateOfBirth: z.string().refine(
+        (dob) => {
+          const yearOfBirth = parseInt(dob.split('-')[0], 10);
+          return yearOfBirth <= currentYear - 30;
+        },
+        {
+          message: `Birth year must be earlier than ${currentYear - 30}`,
+          path: ['body', 'student', 'dateOfBirth'],
+        },
+      ),
       email: z.string().email(),
       contactNo: z.string().min(1),
       emergencyContactNo: z.string().min(1),
@@ -43,7 +53,16 @@ export const createFacultyValidationSchema = z.object({
       presentAddress: z.string().min(1),
       permanentAddress: z.string().min(1),
       profileImage: z.string(),
-      joiningDate: z.string(),
+      joiningDate: z.string().refine(
+        (joiningDate) => {
+          const yearOfJoining = parseInt(joiningDate.split('-')[0], 10);
+          return yearOfJoining >= 2000 && yearOfJoining <= currentYear;
+        },
+        {
+          message: `Joining year must be between 2000 and ${currentYear}`,
+          path: ['body', 'student', 'dateOfBirth'],
+        },
+      ),
       academicDepartment: z.string(),
       nationality: z.enum([...Nationalities] as [string, ...string[]]),
       religion: z.enum([...Religions] as [string, ...string[]]),
@@ -63,7 +82,19 @@ export const updateFacultyValidationSchema = z.object({
         .optional(),
       name: updateNameValidationSchema.optional(),
       gender: z.enum([...Genders] as [string, ...string[]]).optional(),
-      dateOfBirth: z.string().optional(),
+      dateOfBirth: z
+        .string()
+        .refine(
+          (dob) => {
+            const yearOfBirth = parseInt(dob.split('-')[0], 10);
+            return yearOfBirth <= currentYear - 30;
+          },
+          {
+            message: `Birth year must be earlier than ${currentYear - 30}`,
+            path: ['body', 'student', 'dateOfBirth'],
+          },
+        )
+        .optional(),
       email: z.string().email().optional(),
       contactNo: z.string().min(1).optional(),
       emergencyContactNo: z.string().min(1).optional(),
@@ -71,7 +102,19 @@ export const updateFacultyValidationSchema = z.object({
       presentAddress: z.string().min(1).optional(),
       permanentAddress: z.string().min(1).optional(),
       profileImage: z.string().optional(),
-      joiningDate: z.string().optional(),
+      joiningDate: z
+        .string()
+        .refine(
+          (joiningDate) => {
+            const yearOfJoining = parseInt(joiningDate.split('-')[0], 10);
+            return yearOfJoining >= 2000 && yearOfJoining <= currentYear;
+          },
+          {
+            message: `Joining year must be between 2000 and ${currentYear}`,
+            path: ['body', 'student', 'dateOfBirth'],
+          },
+        )
+        .optional(),
       academicDepartment: z.string().optional(),
       nationality: z
         .enum([...Nationalities] as [string, ...string[]])

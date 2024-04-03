@@ -33,7 +33,7 @@ const userSchema = new Schema<TUser>(
       default: 'in-progress',
       required: [true, 'Status is required'],
     },
-    isDeleted: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

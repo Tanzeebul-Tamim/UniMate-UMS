@@ -5,6 +5,7 @@ import {
   Nationalities,
   Religions,
   createNameValidationSchema,
+  currentYear,
   updateNameValidationSchema,
 } from '../../constant/common';
 
@@ -54,7 +55,18 @@ export const createStudentValidationSchema = z.object({
     student: z.object({
       name: createNameValidationSchema,
       gender: z.enum([...Genders] as [string, ...string[]]),
-      dateOfBirth: z.string(),
+      dateOfBirth: z.string().refine(
+        (dob) => {
+          const yearOfBirth = parseInt(dob.split('-')[0], 10);
+          return (
+            yearOfBirth >= currentYear - 30 && yearOfBirth <= currentYear - 20
+          );
+        },
+        {
+          message: `Birth year must be between ${currentYear - 30} and ${currentYear - 20}`,
+          path: ['body', 'student', 'dateOfBirth'],
+        },
+      ),
       email: z.string().email(),
       contactNo: z.string().min(1),
       emergencyContactNo: z.string().min(1),
@@ -102,7 +114,21 @@ export const updateStudentValidationSchema = z.object({
     student: z.object({
       name: updateNameValidationSchema.optional(),
       gender: z.enum([...Genders] as [string, ...string[]]).optional(),
-      dateOfBirth: z.string().optional(),
+      dateOfBirth: z
+        .string()
+        .refine(
+          (dob) => {
+            const yearOfBirth = parseInt(dob.split('-')[0], 10);
+            return (
+              yearOfBirth >= currentYear - 30 && yearOfBirth <= currentYear - 20
+            );
+          },
+          {
+            message: `Birth year must be between ${currentYear - 30} and ${currentYear - 20}`,
+            path: ['body', 'student', 'dateOfBirth'],
+          },
+        )
+        .optional(),
       email: z.string().email().optional(),
       contactNo: z.string().min(1).optional(),
       emergencyContactNo: z.string().min(1).optional(),

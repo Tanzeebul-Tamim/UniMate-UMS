@@ -120,9 +120,9 @@ facultySchema.virtual('fullName').get(function () {
 
 //* Query middleware
 facultySchema.pre('save', async function (next) {
-  const isDepartmentValid = await AcademicDepartment.findOne({
-    _id: this.academicDepartment,
-  });
+  const isDepartmentValid = await AcademicDepartment.findById(
+    this.academicDepartment,
+  );
 
   if (!isDepartmentValid) {
     throw new AppError(httpStatus.CONFLICT, 'Invalid academic department');

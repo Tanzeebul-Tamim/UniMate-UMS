@@ -23,6 +23,8 @@ export type TAcademicSemester = {
   endMonth: TMonth;
 };
 
+export type TUpdateAcademicSemester = Pick<TAcademicSemester, 'name' | 'year'>;
+
 export type TAcademicSemesterNameCodeMapper = {
   // eslint-disable-next-line no-unused-vars
   [key in TAcademicSemesterName]: TAcademicSemesterCode;
@@ -32,10 +34,4 @@ export type TAcademicSemesterNameMonthMapper = {
   Spring: ['January', 'April'];
   Summer: ['May', 'August'];
   Fall: ['September', 'December'];
-};
-
-export type TAcademicSemesterCodeMonthMapper = {
-  '01': ['January', 'April'];
-  '02': ['May', 'August'];
-  '03': ['September', 'December'];
 };
