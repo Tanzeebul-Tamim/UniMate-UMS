@@ -18,7 +18,7 @@ const fields = generateSearchableFields(sampleAdmin);
 const fieldsToRemove = [
   'dateOfBirth',
   'profileImage',
-  'academicDepartment',
+  'managementDepartment',
   'joiningDate',
 ];
 export const AdminSearchableFields = fields.filter(

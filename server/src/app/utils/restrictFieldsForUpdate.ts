@@ -3,11 +3,13 @@ import { TAcademicFaculty } from '../modules/academicFaculty/academicFaculty.int
 import { TUpdateAcademicSemester } from '../modules/academicSemester/academicSemester.interface';
 import { TUpdateAdmin } from '../modules/admin/admin.interface';
 import { TUpdateFaculty } from '../modules/faculty/faculty.interface';
+import { TManagementDepartment } from '../modules/managementDepartment/managementDepartment.interface';
 import { TUpdateStudent } from '../modules/student/student.interface';
 
 //* making sure that the payload contains either 'year' or 'name' only
 export const restrictFieldsValidator = (
   payload: Partial<
+    | TManagementDepartment
     | TAcademicFaculty
     | TUpdateAcademicDepartment
     | TUpdateAcademicSemester

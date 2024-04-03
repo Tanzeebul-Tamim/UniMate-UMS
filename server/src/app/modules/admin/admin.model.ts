@@ -10,6 +10,7 @@ import {
   nameSchema,
 } from '../../constant/common';
 import { Designations } from './admin.constant';
+import { ManagementDepartment } from '../managementDepartment/managementDepartment.model';
 
 const adminSchema = new Schema<TAdmin, AdminModel>(
   {
@@ -118,6 +119,18 @@ adminSchema.virtual('fullName').get(function () {
 });
 
 //* Query middleware
+adminSchema.pre('save', async function (next) {
+  const isDepartmentValid = await ManagementDepartment.findById(
+    this.managementDepartment,
+  );
+
+  if (!isDepartmentValid) {
+    throw new AppError(httpStatus.CONFLICT, 'Invalid management department');
+  }
+
+  next();
+});
+
 adminSchema.pre('find', function (next) {
   this.find({ isDeleted: { $eq: false } });
   next();

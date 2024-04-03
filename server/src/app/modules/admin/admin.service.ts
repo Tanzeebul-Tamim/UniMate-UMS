@@ -16,13 +16,19 @@ const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
     .paginate()
     .fields();
 
-  const result = await adminQuery.modelQuery;
+  const result = await adminQuery.modelQuery.populate({
+    path: 'managementDepartment',
+    select: 'name',
+  });
 
   return result;
 };
 
 const getAnAdminFromDB = async (id: string) => {
-  const result = await Admin.findOne({ id });
+  const result = await Admin.findOne({ id }).populate({
+    path: 'managementDepartment',
+    select: 'name',
+  });
 
   return result;
 };
@@ -41,6 +47,9 @@ const updateAnAdminFromDB = async (id: string, payload: Partial<TAdmin>) => {
   const result = await Admin.findOneAndUpdate({ id }, modifiedPayload, {
     new: true,
     runValidators: true,
+  }).populate({
+    path: 'managementDepartment',
+    select: 'name',
   });
 
   return result;
