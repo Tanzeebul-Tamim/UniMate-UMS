@@ -159,6 +159,33 @@ facultySchema.pre('findOneAndUpdate', async function (next) {
     throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found');
   }
 
+  const updatedFaculty = this.getUpdate() as Partial<TFaculty>;
+  const { contactNo, emergencyContactNo } = updatedFaculty;
+
+  if (contactNo || emergencyContactNo) {
+    const doesContactNoAlreadyExist = await Faculty.findOne({
+      $or: [
+        { contactNo },
+        { emergencyContactNo },
+        { contactNo: emergencyContactNo },
+        { emergencyContactNo: contactNo },
+      ],
+    });
+
+    if (doesContactNoAlreadyExist) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        contactNo && !emergencyContactNo
+          ? `This contact no ${contactNo} is already in use. Provide a different one`
+          : !contactNo && emergencyContactNo
+            ? `This emergency contact no ${emergencyContactNo} is already in use. Provide a different one`
+            : contactNo && emergencyContactNo
+              ? `This contact no ${contactNo} or this emergency contact no ${emergencyContactNo} is already in use. Provide a different one`
+              : '',
+      );
+    }
+  }
+
   next();
 });
 

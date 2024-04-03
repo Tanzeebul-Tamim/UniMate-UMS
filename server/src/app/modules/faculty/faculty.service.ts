@@ -42,7 +42,7 @@ const getAFacultyFromDB = async (id: string) => {
 const updateAFacultyFromDB = async (id: string, payload: Partial<TFaculty>) => {
   restrictFieldsValidator(payload, FacultyUpdatableFields);
   const { name, ...remainingFacultyData } = payload;
-  const modifiedPayload: Record<string, unknown> = { remainingFacultyData };
+  const modifiedPayload: Record<string, unknown> = { ...remainingFacultyData };
 
   if (name && Object.keys(name).length) {
     for (const [key, value] of Object.entries(name)) {

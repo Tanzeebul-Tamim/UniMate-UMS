@@ -146,6 +146,33 @@ adminSchema.pre('findOneAndUpdate', async function (next) {
     throw new AppError(httpStatus.NOT_FOUND, 'Admin not found');
   }
 
+  const updatedAdmin = this.getUpdate() as Partial<TAdmin>;
+  const { contactNo, emergencyContactNo } = updatedAdmin;
+
+  if (contactNo || emergencyContactNo) {
+    const doesContactNoAlreadyExist = await Admin.findOne({
+      $or: [
+        { contactNo },
+        { emergencyContactNo },
+        { contactNo: emergencyContactNo },
+        { emergencyContactNo: contactNo },
+      ],
+    });
+
+    if (doesContactNoAlreadyExist) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        contactNo && !emergencyContactNo
+          ? `This contact no ${contactNo} is already in use. Provide a different one`
+          : !contactNo && emergencyContactNo
+            ? `This emergency contact no ${emergencyContactNo} is already in use. Provide a different one`
+            : contactNo && emergencyContactNo
+              ? `This contact no ${contactNo} or this emergency contact no ${emergencyContactNo} is already in use. Provide a different one`
+              : '',
+      );
+    }
+  }
+
   next();
 });
 

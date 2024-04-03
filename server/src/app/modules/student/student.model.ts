@@ -193,10 +193,37 @@ studentSchema.pre('updateOne', function (next) {
 
 studentSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
-  const doesStudentExist = await Student.findOne(query);
+  const doesStudentExistOrNot = await Student.findOne(query);
 
-  if (!doesStudentExist) {
+  if (!doesStudentExistOrNot) {
     throw new AppError(httpStatus.NOT_FOUND, 'Student not found');
+  }
+
+  const updatedStudent = this.getUpdate() as Partial<TStudent>;
+  const { contactNo, emergencyContactNo } = updatedStudent;
+
+  if (contactNo || emergencyContactNo) {
+    const doesContactNoAlreadyExist = await Student.findOne({
+      $or: [
+        { contactNo },
+        { emergencyContactNo },
+        { contactNo: emergencyContactNo },
+        { emergencyContactNo: contactNo },
+      ],
+    });
+
+    if (doesContactNoAlreadyExist) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        contactNo && !emergencyContactNo
+          ? `This contact no ${contactNo} is already in use. Provide a different one`
+          : !contactNo && emergencyContactNo
+            ? `This emergency contact no ${emergencyContactNo} is already in use. Provide a different one`
+            : contactNo && emergencyContactNo
+              ? `This contact no ${contactNo} or this emergency contact no ${emergencyContactNo} is already in use. Provide a different one`
+              : '',
+      );
+    }
   }
 
   next();

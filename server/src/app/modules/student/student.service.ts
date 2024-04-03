@@ -55,7 +55,7 @@ const getAStudentFromDB = async (id: string) => {
 const updateAStudentFromDB = async (id: string, payload: Partial<TStudent>) => {
   restrictFieldsValidator(payload, StudentUpdatableFields);
   const { name, guardian, localGuardian, ...remainingStudentData } = payload;
-  const modifiedPayload: Record<string, unknown> = { remainingStudentData };
+  const modifiedPayload: Record<string, unknown> = { ...remainingStudentData };
 
   if (name && Object.keys(name).length) {
     for (const [key, value] of Object.entries(name)) {

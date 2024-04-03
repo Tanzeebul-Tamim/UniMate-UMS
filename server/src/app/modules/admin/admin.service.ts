@@ -30,7 +30,7 @@ const getAnAdminFromDB = async (id: string) => {
 const updateAnAdminFromDB = async (id: string, payload: Partial<TAdmin>) => {
   restrictFieldsValidator(payload, AdminUpdatableFields);
   const { name, ...remainingAdminData } = payload;
-  const modifiedPayload: Record<string, unknown> = { remainingAdminData };
+  const modifiedPayload: Record<string, unknown> = { ...remainingAdminData };
 
   if (name && Object.keys(name).length) {
     for (const [key, value] of Object.entries(name)) {
