@@ -11,3 +11,14 @@ const fieldsToRemove = [
 export const StudentSearchableFields = studentFields.filter(
   (field) => !fieldsToRemove.includes(field),
 );
+
+export const StudentUpdatableFields: string[] = [
+  'name',
+  'contactNo',
+  'emergencyContactNo',
+  'presentAddress',
+  'permanentAddress',
+  'guardian',
+  'localGuardian',
+  'profileImage',
+];

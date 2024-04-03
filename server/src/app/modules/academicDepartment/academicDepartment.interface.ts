@@ -28,6 +28,8 @@ export type TAcademicDepartment = {
   academicFaculty: Types.ObjectId;
 };
 
+export type TUpdateAcademicDepartment = Pick<TAcademicDepartment, 'name'>;
+
 export type TAcademicDepartmentNameFacultyMapper = {
   // eslint-disable-next-line no-unused-vars
   [key in TAcademicFacultyName]: TAcademicDepartmentName[];

@@ -32,11 +32,28 @@ export type TAdmin = {
   presentAddress: string;
   permanentAddress: string;
   profileImage: string;
+  managementDepartment: Types.ObjectId;
   joiningDate: Date;
   nationality: TNationality;
   religion: TReligion;
   isDeleted: boolean;
 };
+
+type TExcludeProperties =
+  | 'id'
+  | 'user'
+  | 'designation'
+  | 'gender'
+  | 'dateOfBirth'
+  | 'email'
+  | 'bloodGroup'
+  | 'nationality'
+  | 'religion'
+  | 'joiningDate'
+  | 'managementDepartment'
+  | 'isDeleted';
+
+export type TUpdateAdmin = Omit<TAdmin, TExcludeProperties>;
 
 //* For creating static
 export interface AdminModel extends Model<TAdmin> {

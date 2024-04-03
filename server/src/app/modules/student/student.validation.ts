@@ -11,13 +11,14 @@ import {
 
 //! For creating student
 
-//* Define Zod schemas for individual types
+//* Define Zod schemas for TIndividualGuardian types
 const createIndividualGuardianValidationSchema = z.object({
   name: createNameValidationSchema,
   occupation: z.string().min(1).trim(),
   contactNo: z.string().min(1).trim(),
 });
 
+//* Define Zod schemas for TLocalGuardian types
 const createLocalGuardianValidationSchema =
   createIndividualGuardianValidationSchema.merge(
     z.object({
@@ -26,13 +27,13 @@ const createLocalGuardianValidationSchema =
     }),
   );
 
-//* Define the schema for the TGuardian type
+//* Define the Zod schema for the TGuardian type
 const createGuardianValidationSchema = z.object({
   father: createIndividualGuardianValidationSchema,
   mother: createIndividualGuardianValidationSchema,
 });
 
-//* Define the schema for the TStudent type
+//* Define the Zod schema for the TStudent type
 export const createStudentValidationSchema = z.object({
   body: z.object({
     password: z
@@ -87,13 +88,14 @@ export const createStudentValidationSchema = z.object({
 
 //! For updating student
 
-//* Define Zod schemas for individual types
+//* Define Zod schemas for Partial<TIndividualGuardian> types
 const updateIndividualGuardianValidationSchema = z.object({
   name: updateNameValidationSchema.optional(),
   occupation: z.string().min(1).trim().optional(),
   contactNo: z.string().min(1).trim().optional(),
 });
 
+//* Define the Zod schema for Partial<TLocalGuardian> type
 const updateLocalGuardianValidationSchema =
   updateIndividualGuardianValidationSchema.merge(
     z.object({
@@ -102,48 +104,24 @@ const updateLocalGuardianValidationSchema =
     }),
   );
 
-//* Define the schema for the TGuardian type
+//* Define the Zod schema for the Partial<TGuardian> type
 const updateGuardianValidationSchema = z.object({
   father: updateIndividualGuardianValidationSchema.optional(),
   mother: updateIndividualGuardianValidationSchema.optional(),
 });
 
-//* Define the schema for the TStudent type
+//* Define the Zod schema for the Partial<TStudent> type
 export const updateStudentValidationSchema = z.object({
   body: z.object({
     student: z.object({
       name: updateNameValidationSchema.optional(),
-      gender: z.enum([...Genders] as [string, ...string[]]).optional(),
-      dateOfBirth: z
-        .string()
-        .refine(
-          (dob) => {
-            const yearOfBirth = parseInt(dob.split('-')[0], 10);
-            return (
-              yearOfBirth >= currentYear - 30 && yearOfBirth <= currentYear - 20
-            );
-          },
-          {
-            message: `Birth year must be between ${currentYear - 30} and ${currentYear - 20}`,
-            path: ['body', 'student', 'dateOfBirth'],
-          },
-        )
-        .optional(),
-      email: z.string().email().optional(),
       contactNo: z.string().min(1).optional(),
       emergencyContactNo: z.string().min(1).optional(),
-      bloodGroup: z.enum([...BloodGroups] as [string, ...string[]]).optional(),
       presentAddress: z.string().min(1).optional(),
       permanentAddress: z.string().min(1).optional(),
       guardian: updateGuardianValidationSchema.optional(),
       localGuardian: updateLocalGuardianValidationSchema.optional(),
       profileImage: z.string().optional(),
-      admissionSemester: z.string().optional(),
-      academicDepartment: z.string().optional(),
-      nationality: z
-        .enum([...Nationalities] as [string, ...string[]])
-        .optional(),
-      religion: z.enum([...Religions] as [string, ...string[]]).optional(),
     }),
   }),
 });

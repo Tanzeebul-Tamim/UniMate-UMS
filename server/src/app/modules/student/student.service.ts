@@ -4,8 +4,12 @@ import { Student } from './student.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
-import { StudentSearchableFields } from './student.constant';
+import {
+  StudentSearchableFields,
+  StudentUpdatableFields,
+} from './student.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(Student.find(), query)
@@ -49,6 +53,7 @@ const getAStudentFromDB = async (id: string) => {
 };
 
 const updateAStudentFromDB = async (id: string, payload: Partial<TStudent>) => {
+  restrictFieldsValidator(payload, StudentUpdatableFields);
   const { name, guardian, localGuardian, ...remainingStudentData } = payload;
   const modifiedPayload: Record<string, unknown> = { remainingStudentData };
 

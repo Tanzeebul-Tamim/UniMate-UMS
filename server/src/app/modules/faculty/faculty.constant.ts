@@ -30,3 +30,12 @@ const fieldsToRemove = [
 export const FacultySearchableFields = fields.filter(
   (field) => !fieldsToRemove.includes(field),
 );
+
+export const FacultyUpdatableFields: string[] = [
+  'name',
+  'contactNo',
+  'emergencyContactNo',
+  'presentAddress',
+  'permanentAddress',
+  'profileImage',
+];

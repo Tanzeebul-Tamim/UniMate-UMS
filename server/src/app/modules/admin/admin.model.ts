@@ -78,6 +78,11 @@ const adminSchema = new Schema<TAdmin, AdminModel>(
       type: String,
       required: [true, 'Profile image is required'],
     },
+    managementDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'Management_Department',
+      required: [true, ''],
+    },
     joiningDate: { type: Date, required: [true, 'Joining date is required'] },
     nationality: {
       type: String,

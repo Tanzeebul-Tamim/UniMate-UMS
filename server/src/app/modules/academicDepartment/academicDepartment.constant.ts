@@ -45,3 +45,5 @@ for (let i = 0; i < AcademicFacultyNames.length; i++) {
 }
 
 export const AcademicDepartmentSearchableFields = ['name'];
+
+export const AcademicDepartmentUpdatableFields = ['name'];

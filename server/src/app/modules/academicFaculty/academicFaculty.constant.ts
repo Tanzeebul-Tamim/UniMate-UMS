@@ -9,3 +9,5 @@ export const AcademicFacultyNames: TAcademicFacultyName[] = [
 ];
 
 export const AcademicFacultySearchableFields = ['name'];
+
+export const AcademicFacultyUpdatableFields = ['name'];

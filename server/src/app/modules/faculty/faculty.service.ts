@@ -4,8 +4,9 @@ import { Faculty } from './faculty.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
-import { FacultySearchableFields } from './faculty.constant';
+import { FacultySearchableFields, FacultyUpdatableFields } from './faculty.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 
 const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
   const facultyQuery = new QueryBuilder(Faculty.find(), query)
@@ -39,6 +40,7 @@ const getAFacultyFromDB = async (id: string) => {
 };
 
 const updateAFacultyFromDB = async (id: string, payload: Partial<TFaculty>) => {
+  restrictFieldsValidator(payload, FacultyUpdatableFields);
   const { name, ...remainingFacultyData } = payload;
   const modifiedPayload: Record<string, unknown> = { remainingFacultyData };
 

@@ -39,7 +39,7 @@ export const createFacultyValidationSchema = z.object({
       dateOfBirth: z.string().refine(
         (dob) => {
           const yearOfBirth = parseInt(dob.split('-')[0], 10);
-          return yearOfBirth <= currentYear - 30;
+          return yearOfBirth < currentYear - 30;
         },
         {
           message: `Birth year must be earlier than ${currentYear - 30}`,
@@ -73,53 +73,16 @@ export const createFacultyValidationSchema = z.object({
 
 //! For updating faculty
 
-//* Define the schema for the TFaculty type
+//* Define the schema for the Partial<TFaculty> type
 export const updateFacultyValidationSchema = z.object({
   body: z.object({
     faculty: z.object({
-      designation: z
-        .enum([...Designations] as [string, ...string[]])
-        .optional(),
       name: updateNameValidationSchema.optional(),
-      gender: z.enum([...Genders] as [string, ...string[]]).optional(),
-      dateOfBirth: z
-        .string()
-        .refine(
-          (dob) => {
-            const yearOfBirth = parseInt(dob.split('-')[0], 10);
-            return yearOfBirth <= currentYear - 30;
-          },
-          {
-            message: `Birth year must be earlier than ${currentYear - 30}`,
-            path: ['body', 'student', 'dateOfBirth'],
-          },
-        )
-        .optional(),
-      email: z.string().email().optional(),
       contactNo: z.string().min(1).optional(),
       emergencyContactNo: z.string().min(1).optional(),
-      bloodGroup: z.enum([...BloodGroups] as [string, ...string[]]).optional(),
       presentAddress: z.string().min(1).optional(),
       permanentAddress: z.string().min(1).optional(),
       profileImage: z.string().optional(),
-      joiningDate: z
-        .string()
-        .refine(
-          (joiningDate) => {
-            const yearOfJoining = parseInt(joiningDate.split('-')[0], 10);
-            return yearOfJoining >= 2000 && yearOfJoining <= currentYear;
-          },
-          {
-            message: `Joining year must be between 2000 and ${currentYear}`,
-            path: ['body', 'student', 'dateOfBirth'],
-          },
-        )
-        .optional(),
-      academicDepartment: z.string().optional(),
-      nationality: z
-        .enum([...Nationalities] as [string, ...string[]])
-        .optional(),
-      religion: z.enum([...Religions] as [string, ...string[]]).optional(),
     }),
   }),
 });

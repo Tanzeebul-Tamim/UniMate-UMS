@@ -24,3 +24,12 @@ const fieldsToRemove = [
 export const AdminSearchableFields = fields.filter(
   (field) => !fieldsToRemove.includes(field),
 );
+
+export const AdminUpdatableFields: string[] = [
+  'name',
+  'contactNo',
+  'emergencyContactNo',
+  'presentAddress',
+  'permanentAddress',
+  'profileImage',
+];

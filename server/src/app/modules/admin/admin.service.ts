@@ -4,8 +4,9 @@ import { Admin } from './admin.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
-import { AdminSearchableFields } from './admin.constant';
+import { AdminSearchableFields, AdminUpdatableFields } from './admin.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 
 const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
   const adminQuery = new QueryBuilder(Admin.find(), query)
@@ -27,6 +28,7 @@ const getAnAdminFromDB = async (id: string) => {
 };
 
 const updateAnAdminFromDB = async (id: string, payload: Partial<TAdmin>) => {
+  restrictFieldsValidator(payload, AdminUpdatableFields);
   const { name, ...remainingAdminData } = payload;
   const modifiedPayload: Record<string, unknown> = { remainingAdminData };
 

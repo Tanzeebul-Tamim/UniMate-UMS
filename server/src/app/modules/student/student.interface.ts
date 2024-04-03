@@ -45,6 +45,21 @@ export type TStudent = {
   isDeleted: boolean;
 };
 
+type TExcludeProperties =
+  | 'id'
+  | 'user'
+  | 'gender'
+  | 'dateOfBirth'
+  | 'email'
+  | 'bloodGroup'
+  | 'nationality'
+  | 'religion'
+  | 'admissionSemester'
+  | 'academicDepartment'
+  | 'isDeleted';
+
+export type TUpdateStudent = Omit<TStudent, TExcludeProperties>;
+
 //* For creating static
 export interface StudentModel extends Model<TStudent> {
   // eslint-disable-next-line no-unused-vars

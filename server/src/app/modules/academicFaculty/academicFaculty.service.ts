@@ -1,5 +1,9 @@
 import QueryBuilder from '../../builder/QueryBuilder';
-import { AcademicFacultySearchableFields } from './academicFaculty.constant';
+import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
+import {
+  AcademicFacultySearchableFields,
+  AcademicFacultyUpdatableFields,
+} from './academicFaculty.constant';
 import { TAcademicFaculty } from './academicFaculty.interface';
 import { AcademicFaculty } from './academicFaculty.model';
 
@@ -19,7 +23,7 @@ const getAllAcademicFacultiesFromDB = async (
     .fields();
 
   const result = await academicFacultyQuery.modelQuery;
-  
+
   return result;
 };
 
@@ -32,9 +36,12 @@ const updateAnAcademicFacultyIntoDB = async (
   id: string,
   payload: Partial<TAcademicFaculty>,
 ) => {
+  restrictFieldsValidator(payload, AcademicFacultyUpdatableFields);
+  
   const result = await AcademicFaculty.findByIdAndUpdate(id, payload, {
     new: true,
   });
+
   return result;
 };
 

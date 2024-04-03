@@ -45,6 +45,22 @@ export type TFaculty = {
   isDeleted: boolean;
 };
 
+type TExcludeProperties =
+  | 'id'
+  | 'user'
+  | 'designation'
+  | 'gender'
+  | 'dateOfBirth'
+  | 'email'
+  | 'bloodGroup'
+  | 'nationality'
+  | 'religion'
+  | 'joiningDate'
+  | 'academicDepartment'
+  | 'isDeleted';
+
+export type TUpdateFaculty = Omit<TFaculty, TExcludeProperties>;
+
 //* For creating static
 export interface FacultyModel extends Model<TFaculty> {
   // eslint-disable-next-line no-unused-vars

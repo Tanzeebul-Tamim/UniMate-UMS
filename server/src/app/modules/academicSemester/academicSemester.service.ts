@@ -1,13 +1,16 @@
 import QueryBuilder from '../../builder/QueryBuilder';
 import {
-  checkFieldsValidator,
   createNameCodeValidator,
   createNameMonthValidator,
   updateWithValidInfo,
 } from './academicSemester.utils';
-import { AcademicSemesterSearchableFields } from './academicSemester.constant';
+import {
+  AcademicSemesterSearchableFields,
+  AcademicSemesterUpdatableFields,
+} from './academicSemester.constant';
 import { TAcademicSemester } from './academicSemester.interface';
 import { AcademicSemester } from './academicSemester.model';
+import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 
 const createAcademicSemesterIntoDB = async (payload: TAcademicSemester) => {
   createNameCodeValidator(payload);
@@ -42,7 +45,7 @@ const updateAnAcademicSemesterIntoDB = async (
   id: string,
   payload: Partial<TAcademicSemester>,
 ) => {
-  checkFieldsValidator(payload);
+  restrictFieldsValidator(payload, AcademicSemesterUpdatableFields);
   const getSemesterInfo = (await AcademicSemester.findById(
     id,
   )) as TAcademicSemester;

@@ -43,28 +43,8 @@ export const createNameMonthValidator = (payload: TAcademicSemester) => {
 };
 
 //! For updating a semester
-//* making sure that the payload contains either 'year' or 'name' only
-export const checkFieldsValidator = (
-  payload: Partial<TUpdateAcademicSemester>,
-) => {
-  const properties = Object.keys(payload);
-  if (properties.length <= 2) {
-    properties.map((property) => {
-      if (property !== 'name' && property !== 'year') {
-        throw new Error('Only year and name is updatable');
-      }
-    });
-  } else {
-    throw new Error(
-      `Received ${properties.length} fields. Only year and name is updatable`,
-    );
-  }
-};
-
 //* return valid semester-code, startMonth and endMonth according tho the semester-name
-const alignNameToCodeMonthValidator = (
-  payload: TAcademicSemesterName,
-) => {
+const alignNameToCodeMonthValidator = (payload: TAcademicSemesterName) => {
   const code = academicSemesterNameCodeMapper[payload];
   const startEndMonth = academicSemesterNameMonthMapper[payload];
 

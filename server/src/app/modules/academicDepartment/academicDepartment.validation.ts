@@ -15,11 +15,6 @@ const updateAcademicDepartmentValidationSchema = z.object({
     name: z
       .enum([...AcademicDepartmentNames] as [string, ...string[]])
       .optional(),
-    academicFaculty: z
-      .string({
-        invalid_type_error: 'Academic faculty must be a string',
-      })
-      .optional(),
   }),
 });
 
