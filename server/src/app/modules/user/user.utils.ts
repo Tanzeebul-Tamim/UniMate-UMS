@@ -4,9 +4,18 @@ import { User } from './user.model';
 //! For student ID generation
 
 //* Find the Student ID of the last enrolled student
-const findLastEnrolledStudentID = async () => {
-  const lastStudent = await User.findOne({ role: 'student' }, { id: 1, _id: 0 })
-    .sort({ createdAt: -1 })
+const findLastEnrolledStudentID = async (payload: TAcademicSemester) => {
+  const currentYear = payload.year;
+  const currentSemesterCode = payload.code;
+
+  const lastStudent = await User.findOne(
+    {
+      role: 'student',
+      id: { $regex: new RegExp(`^S-${currentYear}${currentSemesterCode}`) },
+    },
+    { id: 1, _id: 0 },
+  )
+    .sort({ id: -1 })
     .lean();
 
   return lastStudent?.id ? lastStudent.id : undefined;
@@ -16,21 +25,8 @@ const findLastEnrolledStudentID = async () => {
 export const generatedStudentID = async (
   payload: TAcademicSemester,
 ): Promise<string> => {
-  let currentID = (0).toString().padStart(4, '0');
-
-  const lastStudentId = await findLastEnrolledStudentID();
-  const lastStudentYear = lastStudentId?.substring(2, 6);
-  const lastStudentSemesterCode = lastStudentId?.substring(6, 8);
-  const currentSemesterCode = payload.code;
-  const currentYear = payload.year;
-
-  if (
-    lastStudentId &&
-    lastStudentSemesterCode === currentSemesterCode &&
-    lastStudentYear === currentYear
-  ) {
-    currentID = lastStudentId.substring(8);
-  }
+  const lastStudentId = await findLastEnrolledStudentID(payload);
+  const currentID = lastStudentId?.substring(8) || '0000';
 
   let incrementedID = (parseInt(currentID) + 1).toString().padStart(4, '0');
   incrementedID = `S-${payload.year}${payload.code}${incrementedID}`;

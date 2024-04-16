@@ -10,7 +10,7 @@ const academicFacultySchema = new Schema<TAcademicFaculty>(
       type: String,
       enum: {
         values: AcademicFacultyNames,
-        message: 'Invalid faculty name. Please choose a valid faculty name.',
+        message: 'Invalid faculty name. Please enter a valid faculty name.',
       },
       required: [true, 'Name is a required field'],
       unique: true,

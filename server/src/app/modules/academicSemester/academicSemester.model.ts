@@ -14,7 +14,7 @@ const academicSemesterSchema = new Schema<TAcademicSemester>(
       type: String,
       enum: {
         values: AcademicSemesterNames,
-        message: 'Invalid semester name. Please choose a valid semester name',
+        message: 'Invalid semester name. Please enter a valid semester name',
       },
       required: [true, 'Name is required'],
     },
@@ -22,7 +22,7 @@ const academicSemesterSchema = new Schema<TAcademicSemester>(
       type: String,
       enum: {
         values: AcademicSemesterCodes,
-        message: 'Invalid semester code. Please choose a valid semester code',
+        message: 'Invalid semester code. Please enter a valid semester code',
       },
       required: [true, 'Code is required'],
     },
@@ -32,7 +32,7 @@ const academicSemesterSchema = new Schema<TAcademicSemester>(
       enum: {
         values: AcademicSemesterMonths,
         message:
-          'Invalid semester start month. Please choose a valid semester start month',
+          'Invalid semester start month. Please enter a valid semester start month',
       },
       required: [true, 'Start month is required'],
     },
@@ -41,7 +41,7 @@ const academicSemesterSchema = new Schema<TAcademicSemester>(
       enum: {
         values: AcademicSemesterMonths,
         message:
-          'Invalid semester end month. Please choose a valid semester end month',
+          'Invalid semester end month. Please enter a valid semester end month',
       },
       required: [true, 'End month is required'],
     },
@@ -74,13 +74,17 @@ academicSemesterSchema.pre('findOneAndUpdate', async function (next) {
 
   const updatedSemester = this.getUpdate() as TAcademicSemester;
   const { year, name } = updatedSemester;
+  
   const doesSemesterAlreadyExist = await AcademicSemester.findOne({
     year,
     name,
   });
 
   if (doesSemesterAlreadyExist) {
-    throw new AppError(httpStatus.CONFLICT, `${name}-${year} semester already exist`);
+    throw new AppError(
+      httpStatus.CONFLICT,
+      `${name}-${year} semester already exist`,
+    );
   }
 
   next();

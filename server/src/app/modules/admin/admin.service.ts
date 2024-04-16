@@ -68,7 +68,10 @@ const deleteAnAdminFromDB = async (id: string) => {
       { id },
       { isDeleted: true },
       { new: true, session },
-    );
+    ).populate({
+      path: 'managementDepartment',
+      select: 'name',
+    });
 
     if (!deletedAdmin) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete admin');
@@ -90,11 +93,16 @@ const deleteAnAdminFromDB = async (id: string) => {
     await session.endSession();
 
     return deletedAdmin;
-  } catch (err) {
+  } catch (err: unknown) {
     //* Abort and end session if transaction fails
     await session.abortTransaction();
     await session.endSession();
-    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete admin');
+
+    if (err instanceof Error) {
+      throw new AppError(httpStatus.BAD_REQUEST, err?.message);
+    } else {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete admin');
+    }
   }
 };
 

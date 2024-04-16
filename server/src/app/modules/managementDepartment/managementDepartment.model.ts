@@ -11,7 +11,7 @@ const managementDepartmentSchema = new Schema<TManagementDepartment>(
       enum: {
         values: ManagementDepartmentNames,
         message:
-          'Invalid department name. Please choose a valid department name.',
+          'Invalid department name. Please enter a valid department name.',
       },
       required: [true, 'Name is a required field'],
       unique: true,

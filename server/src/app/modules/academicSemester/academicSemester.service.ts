@@ -2,7 +2,7 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import {
   createNameCodeValidator,
   createNameMonthValidator,
-  updateWithValidInfo,
+  updateAcademicSemesterWithValidInfo,
 } from './academicSemester.utils';
 import {
   AcademicSemesterSearchableFields,
@@ -50,7 +50,10 @@ const updateAnAcademicSemesterIntoDB = async (
     id,
   )) as TAcademicSemester;
 
-  const updatedSemester = updateWithValidInfo(payload, getSemesterInfo);
+  const updatedSemester = updateAcademicSemesterWithValidInfo(
+    payload,
+    getSemesterInfo,
+  );
 
   const result = await AcademicSemester.findByIdAndUpdate(id, updatedSemester, {
     new: true,

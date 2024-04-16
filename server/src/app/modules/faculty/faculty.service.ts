@@ -4,7 +4,10 @@ import { Faculty } from './faculty.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
-import { FacultySearchableFields, FacultyUpdatableFields } from './faculty.constant';
+import {
+  FacultySearchableFields,
+  FacultyUpdatableFields,
+} from './faculty.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 
@@ -77,7 +80,13 @@ const deleteAFacultyFromDB = async (id: string) => {
       { id },
       { isDeleted: true },
       { new: true, session },
-    );
+    ).populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+        select: 'name',
+      },
+    });
 
     if (!deletedFaculty) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete faculty');
@@ -99,11 +108,16 @@ const deleteAFacultyFromDB = async (id: string) => {
     await session.endSession();
 
     return deletedFaculty;
-  } catch (err) {
+  } catch (err: unknown) {
     //* Abort and end session if transaction fails
     await session.abortTransaction();
     await session.endSession();
-    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete faculty');
+
+    if (err instanceof Error) {
+      throw new AppError(httpStatus.BAD_REQUEST, err?.message);
+    } else {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete faculty');
+    }
   }
 };
 

@@ -1,3 +1,5 @@
+import httpStatus from 'http-status';
+import AppError from '../../errors/AppError';
 import {
   TAcademicSemester,
   TAcademicSemesterName,
@@ -24,7 +26,8 @@ const academicSemesterNameMonthMapper: TAcademicSemesterNameMonthMapper = {
 export const createNameCodeValidator = (payload: TAcademicSemester) => {
   const semesterCode = academicSemesterNameCodeMapper[payload.name];
   if (semesterCode !== payload.code) {
-    throw new Error(
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
       `Invalid Semester Code! Semester code for '${payload.name}' is '${semesterCode}'`,
     );
   }
@@ -36,14 +39,15 @@ export const createNameMonthValidator = (payload: TAcademicSemester) => {
   const startMonth = startEndMonth[0];
   const endMonth = startEndMonth[1];
   if (startMonth !== payload.startMonth || endMonth !== payload.endMonth) {
-    throw new Error(
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
       `Invalid start/end month. Valid start-end month for ${payload.name} semester is ${startMonth}-${endMonth}`,
     );
   }
 };
 
 //! For updating a semester
-//* return valid semester-code, startMonth and endMonth according tho the semester-name
+//* return valid semester-code, startMonth and endMonth according to the semester-name
 const alignNameToCodeMonthValidator = (payload: TAcademicSemesterName) => {
   const code = academicSemesterNameCodeMapper[payload];
   const startEndMonth = academicSemesterNameMonthMapper[payload];
@@ -56,7 +60,7 @@ const alignNameToCodeMonthValidator = (payload: TAcademicSemesterName) => {
 };
 
 //* update semester with valid info
-export const updateWithValidInfo = (
+export const updateAcademicSemesterWithValidInfo = (
   payload: Partial<TUpdateAcademicSemester>,
   semesterInfo: TAcademicSemester,
 ) => {

@@ -12,7 +12,11 @@ import { Student } from '../student/student.model';
 import { Faculty } from '../faculty/faculty.model';
 import { Admin } from '../admin/admin.model';
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
-import { generatedAdminID, generatedFacultyID, generatedStudentID } from './user.utils';
+import {
+  generatedAdminID,
+  generatedFacultyID,
+  generatedStudentID,
+} from './user.utils';
 
 //! Create a student user
 
@@ -68,11 +72,16 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
 
     return newStudent;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
+  } catch (err: unknown) {
     //* Abort and end session if transaction fails
     await session.abortTransaction();
     await session.endSession();
-    throw new AppError(httpStatus.BAD_REQUEST, err);
+
+    if (err instanceof Error) {
+      throw new AppError(httpStatus.BAD_REQUEST, err?.message);
+    } else {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
+    }
   }
 };
 
@@ -126,11 +135,16 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
 
     return newFaculty;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
+  } catch (err: unknown) {
     //* Abort and end session if transaction fails
     await session.abortTransaction();
     await session.endSession();
-    throw new AppError(httpStatus.BAD_REQUEST, err);
+
+    if (err instanceof Error) {
+      throw new AppError(httpStatus.BAD_REQUEST, err?.message);
+    } else {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create faculty');
+    }
   }
 };
 
@@ -184,16 +198,21 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
 
     return newAdmin;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
+  } catch (err: unknown) {
     //* Abort and end session if transaction fails
     await session.abortTransaction();
     await session.endSession();
-    throw new AppError(httpStatus.BAD_REQUEST, err);
+
+    if (err instanceof Error) {
+      throw new AppError(httpStatus.BAD_REQUEST, err?.message);
+    } else {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create admin');
+    }
   }
 };
 
 export const UserServices = {
   createStudentIntoDB,
   createFacultyIntoDB,
-  createAdminIntoDB
+  createAdminIntoDB,
 };

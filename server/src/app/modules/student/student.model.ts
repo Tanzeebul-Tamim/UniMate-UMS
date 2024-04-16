@@ -124,7 +124,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       enum: {
         values: Nationalities,
         message:
-          '{VALUE} is an invalid nationality. Please choose a valid nationality.',
+          '{VALUE} is an invalid nationality. Please enter a valid nationality.',
       },
       required: [true, 'Nationality is required'],
     },
@@ -133,7 +133,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       enum: {
         values: Religions,
         message:
-          '{VALUE} is an invalid religion. Please choose a valid religion.',
+          '{VALUE} is an invalid religion. Please enter a valid religion.',
       },
       required: [true, 'Religion is required'],
     },
@@ -159,7 +159,7 @@ studentSchema.pre('save', async function (next) {
   );
 
   const isSemesterValid = await AcademicSemester.findById(
-    this.academicDepartment,
+    this.admissionSemester,
   );
 
   if (!isDepartmentValid) {

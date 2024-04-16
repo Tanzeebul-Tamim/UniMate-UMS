@@ -11,7 +11,7 @@ const academicDepartmentSchema = new Schema<TAcademicDepartment>(
       enum: {
         values: AcademicDepartmentNames,
         message:
-          'Invalid department name. Please choose a valid department name.',
+          'Invalid department name. Please enter a valid department name.',
       },
       required: [true, 'Name is a required field'],
       unique: true,
@@ -31,7 +31,10 @@ academicDepartmentSchema.pre('save', async function (next) {
   });
 
   if (doesDepartmentExist) {
-    throw new AppError(httpStatus.CONFLICT, `${this.name} academic department already exists`);
+    throw new AppError(
+      httpStatus.CONFLICT,
+      `${this.name} academic department already exists`,
+    );
   }
   next();
 });

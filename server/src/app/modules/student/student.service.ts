@@ -142,7 +142,18 @@ const deleteAStudentFromDB = async (id: string) => {
       { id },
       { isDeleted: true },
       { new: true, session },
-    );
+    )
+      .populate({
+        path: 'academicDepartment',
+        populate: {
+          path: 'academicFaculty',
+          select: 'name',
+        },
+      })
+      .populate({
+        path: 'admissionSemester',
+        select: ['name', 'year', 'startMonth', 'endMonth'],
+      });
 
     if (!deletedStudent) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student');
@@ -164,11 +175,16 @@ const deleteAStudentFromDB = async (id: string) => {
     await session.endSession();
 
     return deletedStudent;
-  } catch (err) {
+  } catch (err: unknown) {
     //* Abort and end session if transaction fails
     await session.abortTransaction();
     await session.endSession();
-    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student');
+
+    if (err instanceof Error) {
+      throw new AppError(httpStatus.BAD_REQUEST, err?.message);
+    } else {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student');
+    }
   }
 };
 
