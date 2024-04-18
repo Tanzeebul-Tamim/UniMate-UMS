@@ -5,6 +5,8 @@ import { AcademicDepartmentSearchableFields } from './academicDepartment.constan
 import { TAcademicDepartment } from './academicDepartment.interface';
 import { AcademicDepartment } from './academicDepartment.model';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
+import AppError from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
   const academicFaculty = await AcademicFaculty.findById(
@@ -22,7 +24,7 @@ const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
       return result;
     }
   } else {
-    throw new Error('Academic Faculty not found!');
+    throw new AppError(httpStatus.NOT_FOUND, 'Academic Faculty not found!');
   }
 };
 

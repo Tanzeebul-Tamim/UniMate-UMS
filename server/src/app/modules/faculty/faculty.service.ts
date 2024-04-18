@@ -10,6 +10,7 @@ import {
 } from './faculty.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
+import { getFacultyAssignedCourses } from './faculty.utils';
 
 const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
   const facultyQuery = new QueryBuilder(Faculty.find(), query)
@@ -40,6 +41,17 @@ const getAFacultyFromDB = async (id: string) => {
   });
 
   return result;
+};
+
+const getAssignedCoursesOfAFacultyFromDB = async (id: string) => {
+  const facultyInfo = await Faculty.findOne({ id });
+
+  if (facultyInfo) {
+    const result = getFacultyAssignedCourses(facultyInfo._id);
+    return result;
+  } else {
+    throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found');
+  }
 };
 
 const updateAFacultyFromDB = async (id: string, payload: Partial<TFaculty>) => {
@@ -124,6 +136,7 @@ const deleteAFacultyFromDB = async (id: string) => {
 export const FacultyServices = {
   getAllFacultiesFromDB,
   getAFacultyFromDB,
+  getAssignedCoursesOfAFacultyFromDB,
   updateAFacultyFromDB,
   deleteAFacultyFromDB,
 };

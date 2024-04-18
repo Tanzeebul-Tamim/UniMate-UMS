@@ -1,3 +1,5 @@
+import httpStatus from 'http-status';
+import AppError from '../errors/AppError';
 import { TUpdateAcademicDepartment } from '../modules/academicDepartment/academicDepartment.interface';
 import { TAcademicFaculty } from '../modules/academicFaculty/academicFaculty.interface';
 import { TUpdateAcademicSemester } from '../modules/academicSemester/academicSemester.interface';
@@ -24,13 +26,15 @@ export const restrictFieldsValidator = (
   if (payloadFields.length <= allowedFields.length) {
     payloadFields.map((property) => {
       if (!allowedFields.includes(property)) {
-        throw new Error(
+        throw new AppError(
+          httpStatus.BAD_REQUEST,
           `Invalid field '${property}'. ${allowedFields.length > 1 ? 'Expected fields are' : 'Expected field is'} ${[...allowedFields]}`,
         );
       }
     });
   } else {
-    throw new Error(
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
       `Expected ${allowedFields.length} ${allowedFields.length > 1 ? 'fields' : 'field'} (${[...allowedFields]}), received ${payloadFields.length} ${payloadFields.length > 1 ? 'fields' : 'field'} (${payloadFields}).`,
     );
   }

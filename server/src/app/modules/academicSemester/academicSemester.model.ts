@@ -83,7 +83,7 @@ academicSemesterSchema.pre('findOneAndUpdate', async function (next) {
   if (doesSemesterAlreadyExist) {
     throw new AppError(
       httpStatus.CONFLICT,
-      `${name}-${year} semester already exist`,
+      `${name}-${year} semester already exists`,
     );
   }
 

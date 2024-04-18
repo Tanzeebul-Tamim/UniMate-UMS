@@ -11,7 +11,7 @@ const getAllFaculties = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Faculties retrieved successfully',
+      message: 'Faculties have been retrieved successfully',
       data: result,
     });
   } else {
@@ -32,7 +32,7 @@ const getAFaculty = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Faculty is retrieved successfully',
+      message: 'Faculty has been retrieved successfully',
       data: result,
     });
   } else {
@@ -45,6 +45,19 @@ const getAFaculty = catchAsync(async (req, res) => {
   }
 });
 
+const getAssignedCoursesOfAFaculty = catchAsync(async (req, res) => {
+  const { facultyId } = req.params;
+  const result =
+    await FacultyServices.getAssignedCoursesOfAFacultyFromDB(facultyId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `Assigned courses for faculty ${facultyId} has been retrieved successfully`,
+    data: result,
+  });
+});
+
 const updateAFaculty = catchAsync(async (req, res) => {
   const { facultyId } = req.params;
   const { faculty } = req.body;
@@ -53,7 +66,7 @@ const updateAFaculty = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Faculty is updated successfully',
+    message: 'Faculty has been updated successfully',
     data: result,
   });
 });
@@ -66,7 +79,7 @@ const deleteAFaculty = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Faculty is deleted successfully',
+      message: 'Faculty has been deleted successfully',
       data: result,
     });
   } else {
@@ -82,6 +95,7 @@ const deleteAFaculty = catchAsync(async (req, res) => {
 export const FacultyControllers = {
   getAllFaculties,
   getAFaculty,
+  getAssignedCoursesOfAFaculty,
   updateAFaculty,
   deleteAFaculty,
 };

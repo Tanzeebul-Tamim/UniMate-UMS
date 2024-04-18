@@ -41,6 +41,22 @@ const getACourseFromDB = async (id: string) => {
   return result;
 };
 
+const getAssignedFacultiesOfACourseFromDB = async (id: string) => {
+  const result = await CourseFaculty.findOne({ course: id }).populate({
+    path: 'faculties',
+  });
+
+  if (result) {
+    if (result.faculties.length > 0) {
+      return result;
+    } else {
+      throw new AppError(httpStatus.NOT_FOUND, 'No assigned faculties found');
+    }
+  } else {
+    throw new AppError(httpStatus.NOT_FOUND, 'No documents found');
+  }
+};
+
 const updateACourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   //* start a session
   const session = await mongoose.startSession();
@@ -364,6 +380,7 @@ export const CourseServices = {
   createCourseIntoDB,
   getAllCoursesFromDB,
   getACourseFromDB,
+  getAssignedFacultiesOfACourseFromDB,
   updateACourseIntoDB,
   assignFacultiesIntoCourseIntoDB,
   removeFacultiesFromCourseFromDB,

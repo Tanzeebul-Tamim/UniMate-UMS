@@ -12,11 +12,14 @@ router.post(
   ),
   ManagementDepartmentControllers.createManagementDepartment,
 );
+
 router.get('/', ManagementDepartmentControllers.getAllManagementDepartments);
+
 router.get(
   '/:departmentId',
   ManagementDepartmentControllers.getAManagementDepartment,
 );
+
 router.patch(
   '/:departmentId',
   validateRequest(

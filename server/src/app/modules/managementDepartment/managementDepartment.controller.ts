@@ -26,7 +26,7 @@ const getAllManagementDepartments = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Management departments retrieved successfully',
+      message: 'Management departments have been retrieved successfully',
       data: result,
     });
   } else {
@@ -50,7 +50,7 @@ const getAManagementDepartment = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Management department is retrieved successfully',
+      message: 'Management department has been retrieved successfully',
       data: result,
     });
   } else {

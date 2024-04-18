@@ -12,8 +12,11 @@ router.post(
   ),
   AcademicFacultyControllers.createAcademicFaculty,
 );
+
 router.get('/', AcademicFacultyControllers.getAllAcademicFaculties);
+
 router.get('/:facultyId', AcademicFacultyControllers.getAnAcademicFaculty);
+
 router.patch(
   '/:facultyId',
   validateRequest(

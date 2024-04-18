@@ -6,19 +6,19 @@ import catchAsync from '../../utils/catchAsync';
 const getAllStudents = catchAsync(async (req, res) => {
   const query = req.query;
   const result = await StudentServices.getAllStudentsFromDB(query);
-  
+
   if (result.length > 0) {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Students retrieved successfully',
+      message: 'Students have been retrieved successfully',
       data: result,
     });
   } else {
     sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
       success: false,
-      message: 'No student found',
+      message: 'No students found',
       data: null,
     });
   }
@@ -32,7 +32,7 @@ const getAStudent = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Student is retrieved successfully',
+      message: 'Student has been retrieved successfully',
       data: result,
     });
   } else {
@@ -53,7 +53,7 @@ const updateAStudent = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Student is updated successfully',
+    message: 'Student has been updated successfully',
     data: result,
   });
 });
@@ -66,7 +66,7 @@ const deleteAStudent = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Student is deleted successfully',
+      message: 'Student has been deleted successfully',
       data: result,
     });
   } else {
