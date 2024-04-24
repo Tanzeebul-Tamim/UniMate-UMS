@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { TFaculty } from './faculty.interface';
+import { TUpdateFaculty } from './faculty.interface';
 import { Faculty } from './faculty.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
@@ -50,11 +50,11 @@ const getAssignedCoursesOfAFacultyFromDB = async (id: string) => {
     const result = getFacultyAssignedCourses(facultyInfo._id);
     return result;
   } else {
-    throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found!');
   }
 };
 
-const updateAFacultyFromDB = async (id: string, payload: Partial<TFaculty>) => {
+const updateAFacultyFromDB = async (id: string, payload: TUpdateFaculty) => {
   restrictFieldsValidator(payload, FacultyUpdatableFields);
   const { name, ...remainingFacultyData } = payload;
   const modifiedPayload: Record<string, unknown> = { ...remainingFacultyData };

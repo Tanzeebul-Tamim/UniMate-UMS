@@ -35,11 +35,12 @@ const getAManagementDepartmentFromDB = async (id: string) => {
 
 const updateAManagementDepartmentIntoDB = async (
   id: string,
-  payload: Partial<TManagementDepartment>,
+  payload: TManagementDepartment,
 ) => {
   restrictFieldsValidator(payload, ManagementDepartmentSearchableFields);
   const result = await ManagementDepartment.findByIdAndUpdate(id, payload, {
     new: true,
+    runValidators: true,
   });
   return result;
 };

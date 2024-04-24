@@ -33,7 +33,7 @@ academicFacultySchema.pre('findOneAndUpdate', async function (next) {
   const doesFacultyExist = await AcademicFaculty.findOne(query);
 
   if (!doesFacultyExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Academic faculty not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Academic faculty not found!');
   }
   next();
 });

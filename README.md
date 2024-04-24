@@ -1,5 +1,7 @@
 # PH-University
 
+### (On progress. Will make a proper complete readme later 😅)
+
 ## This repository contains a MERN-stack MVP project aimed at showcasing the core functionalities of a university management system, built for practice purposes.
 
 ### Features

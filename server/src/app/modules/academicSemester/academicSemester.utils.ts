@@ -61,7 +61,7 @@ const alignNameToCodeMonthValidator = (payload: TAcademicSemesterName) => {
 
 //* update semester with valid info
 export const updateAcademicSemesterWithValidInfo = (
-  payload: Partial<TUpdateAcademicSemester>,
+  payload: TUpdateAcademicSemester,
   semesterInfo: TAcademicSemester,
 ) => {
   const { name, year, code, startMonth, endMonth } = semesterInfo;

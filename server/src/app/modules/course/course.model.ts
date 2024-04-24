@@ -111,7 +111,7 @@ courseSchema.pre('findOneAndUpdate', async function (next) {
   const doesCourseExistOrNot = await Course.findOne(query);
 
   if (!doesCourseExistOrNot) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Course not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Course not found!');
   }
 
   const updatedCourse = this.getUpdate() as Partial<TCourse>;
@@ -165,7 +165,7 @@ courseFacultySchema.pre('findOneAndUpdate', async function (next) {
   const doesCourseExistOrNot = await Course.findOne(query);
 
   if (!doesCourseExistOrNot) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Course not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Course not found!');
   }
 
   next();

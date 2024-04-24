@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { TAdmin } from './admin.interface';
+import { TUpdateAdmin } from './admin.interface';
 import { Admin } from './admin.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
@@ -33,7 +33,7 @@ const getAnAdminFromDB = async (id: string) => {
   return result;
 };
 
-const updateAnAdminFromDB = async (id: string, payload: Partial<TAdmin>) => {
+const updateAnAdminFromDB = async (id: string, payload: TUpdateAdmin) => {
   restrictFieldsValidator(payload, AdminUpdatableFields);
   const { name, ...remainingAdminData } = payload;
   const modifiedPayload: Record<string, unknown> = { ...remainingAdminData };

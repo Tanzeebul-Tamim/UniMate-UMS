@@ -2,7 +2,7 @@ import sampleFaculty from '../../../../sample/faculty.json';
 import { generateSearchableFields } from '../../utils/generateSearchableFields';
 import { TDesignation } from './faculty.interface';
 
-export const Designations: TDesignation[] = [
+export const FacultyDesignations: TDesignation[] = [
   'professor',
   'associate professor',
   'assistant professor',

@@ -1,24 +1,25 @@
 import httpStatus from 'http-status';
 import AppError from '../errors/AppError';
+import { TUpdateStudent } from '../modules/student/student.interface';
+import { TUpdateFaculty } from '../modules/faculty/faculty.interface';
+import { TUpdateAdmin } from '../modules/admin/admin.interface';
+import { TUpdateSemesterRegistrationDB } from '../modules/semesterRegistration/semesterRegistration.interface';
+import { TUpdateAcademicSemester } from '../modules/academicSemester/academicSemester.interface';
 import { TUpdateAcademicDepartment } from '../modules/academicDepartment/academicDepartment.interface';
 import { TAcademicFaculty } from '../modules/academicFaculty/academicFaculty.interface';
-import { TUpdateAcademicSemester } from '../modules/academicSemester/academicSemester.interface';
-import { TUpdateAdmin } from '../modules/admin/admin.interface';
-import { TUpdateFaculty } from '../modules/faculty/faculty.interface';
 import { TManagementDepartment } from '../modules/managementDepartment/managementDepartment.interface';
-import { TUpdateStudent } from '../modules/student/student.interface';
 
 //* making sure that the payload contains either 'year' or 'name' only
 export const restrictFieldsValidator = (
-  payload: Partial<
-    | TManagementDepartment
-    | TAcademicFaculty
-    | TUpdateAcademicDepartment
-    | TUpdateAcademicSemester
+  payload:
     | TUpdateStudent
     | TUpdateFaculty
     | TUpdateAdmin
-  >,
+    | TUpdateSemesterRegistrationDB
+    | TUpdateAcademicSemester
+    | TUpdateAcademicDepartment
+    | TAcademicFaculty
+    | TManagementDepartment,
   allowedFields: string[],
 ) => {
   const payloadFields: string[] = Object.keys(payload);

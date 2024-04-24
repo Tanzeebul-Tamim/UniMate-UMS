@@ -10,7 +10,7 @@ import {
   Religions,
   nameSchema,
 } from '../../constant/common';
-import { Designations } from './faculty.constant';
+import { FacultyDesignations } from './faculty.constant';
 
 const facultySchema = new Schema<TFaculty, FacultyModel>(
   {
@@ -23,7 +23,7 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
     designation: {
       type: String,
       enum: {
-        values: Designations,
+        values: FacultyDesignations,
         message:
           '{VALUE} is an invalid designation. Please enter a valid designation',
       },
@@ -160,7 +160,7 @@ facultySchema.pre('findOneAndUpdate', async function (next) {
   const doesFacultyExist = await Faculty.findOne(query);
 
   if (!doesFacultyExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found!');
   }
 
   const updatedFaculty = this.getUpdate() as Partial<TFaculty>;

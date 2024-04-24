@@ -11,7 +11,7 @@ const createAcademicFaculty = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Academic faculty is created successfully',
+    message: 'Academic faculty has been created successfully',
     data: result,
   });
 });

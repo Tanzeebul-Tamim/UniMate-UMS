@@ -162,10 +162,12 @@ studentSchema.pre('save', async function (next) {
     this.admissionSemester,
   );
 
+  if (!isSemesterValid) {
+    throw new AppError(httpStatus.CONFLICT, 'Invalid academic semester');
+  }
+
   if (!isDepartmentValid) {
     throw new AppError(httpStatus.CONFLICT, 'Invalid academic department');
-  } else if (!isSemesterValid) {
-    throw new AppError(httpStatus.CONFLICT, 'Invalid academic semester');
   }
 
   next();
@@ -196,7 +198,7 @@ studentSchema.pre('findOneAndUpdate', async function (next) {
   const doesStudentExistOrNot = await Student.findOne(query);
 
   if (!doesStudentExistOrNot) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Student not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Student not found!');
   }
 
   const updatedStudent = this.getUpdate() as Partial<TStudent>;

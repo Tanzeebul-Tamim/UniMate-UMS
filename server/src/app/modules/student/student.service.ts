@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { TStudent } from './student.interface';
+import { TUpdateStudent } from './student.interface';
 import { Student } from './student.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
@@ -52,7 +52,7 @@ const getAStudentFromDB = async (id: string) => {
   return result;
 };
 
-const updateAStudentFromDB = async (id: string, payload: Partial<TStudent>) => {
+const updateAStudentFromDB = async (id: string, payload: TUpdateStudent) => {
   restrictFieldsValidator(payload, StudentUpdatableFields);
   const { name, guardian, localGuardian, ...remainingStudentData } = payload;
   const modifiedPayload: Record<string, unknown> = { ...remainingStudentData };

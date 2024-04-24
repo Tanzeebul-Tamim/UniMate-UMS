@@ -9,7 +9,7 @@ import {
   Religions,
   nameSchema,
 } from '../../constant/common';
-import { Designations } from './admin.constant';
+import { AdminDesignations } from './admin.constant';
 import { ManagementDepartment } from '../managementDepartment/managementDepartment.model';
 
 const adminSchema = new Schema<TAdmin, AdminModel>(
@@ -23,7 +23,7 @@ const adminSchema = new Schema<TAdmin, AdminModel>(
     designation: {
       type: String,
       enum: {
-        values: Designations,
+        values: AdminDesignations,
         message:
           '{VALUE} is an invalid designation. Please enter a valid designation',
       },
@@ -156,7 +156,7 @@ adminSchema.pre('findOneAndUpdate', async function (next) {
   const doesAdminExist = await Admin.findOne(query);
 
   if (!doesAdminExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Admin not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Admin not found!');
   }
 
   const updatedAdmin = this.getUpdate() as Partial<TAdmin>;

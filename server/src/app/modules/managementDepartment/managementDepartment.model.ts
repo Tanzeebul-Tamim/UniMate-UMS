@@ -39,7 +39,10 @@ managementDepartmentSchema.pre('findOneAndUpdate', async function (next) {
   const doesDepartmentExist = await ManagementDepartment.findOne(query);
 
   if (!doesDepartmentExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Management department not found');
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Management department not found!',
+    );
   }
   next();
 });

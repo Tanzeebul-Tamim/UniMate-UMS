@@ -53,7 +53,7 @@ type TExcludeProperties =
   | 'managementDepartment'
   | 'isDeleted';
 
-export type TUpdateAdmin = Omit<TAdmin, TExcludeProperties>;
+export type TUpdateAdmin = Partial<Omit<TAdmin, TExcludeProperties>>;
 
 //* For creating static
 export interface AdminModel extends Model<TAdmin> {

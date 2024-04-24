@@ -53,6 +53,8 @@ export type TCourse = {
   isDeleted: boolean;
 };
 
+export type TUpdateCourse = Partial<Omit<TCourse, 'isDeleted'>>;
+
 export type TCourseTitlePrefixMapper = {
   BASIC: ['Basic Computer Skill'];
   HTML: ['Hyper Text Markup Language'];

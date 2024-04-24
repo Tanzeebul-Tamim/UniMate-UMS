@@ -8,7 +8,7 @@ import {
   currentYear,
   updateNameValidationSchema,
 } from '../../constant/common';
-import { Designations } from './admin.constant';
+import { AdminDesignations } from './admin.constant';
 
 //! For creating admin
 
@@ -33,7 +33,7 @@ export const createAdminValidationSchema = z.object({
       })
       .optional(),
     admin: z.object({
-      designation: z.enum([...Designations] as [string, ...string[]]),
+      designation: z.enum([...AdminDesignations] as [string, ...string[]]),
       name: createNameValidationSchema,
       gender: z.enum([...Genders] as [string, ...string[]]),
       dateOfBirth: z.string().refine(

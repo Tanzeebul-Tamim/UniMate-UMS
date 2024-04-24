@@ -5,6 +5,7 @@ import {
   TCoursePrefix,
   TCourseTitle,
   TCourseTitlePrefixMapper,
+  TUpdateCourse,
 } from './course.interface';
 
 //* Mappers
@@ -39,7 +40,7 @@ export const createTitlePrefixValidator = (payload: TCourse) => {
     if (prefix === null) {
       throw new AppError(
         httpStatus.BAD_GATEWAY,
-        `Invalid course prefix. Valid course prefix for ${payload.title} is not found`,
+        `Invalid course prefix. Valid course prefix for ${payload.title} is not found!`,
       );
     }
 
@@ -52,7 +53,7 @@ export const createTitlePrefixValidator = (payload: TCourse) => {
 
 //! For updating a course
 //* return valid prefix according to the course-title
-export const updateTitlePrefixValidator = (payload: Partial<TCourse>) => {
+export const updateTitlePrefixValidator = (payload: TUpdateCourse) => {
   if (payload.title && !payload.prefix) {
     let prefix: TCoursePrefix | null = null;
 
@@ -68,7 +69,7 @@ export const updateTitlePrefixValidator = (payload: Partial<TCourse>) => {
     if (prefix === null) {
       throw new AppError(
         httpStatus.BAD_GATEWAY,
-        `Valid course prefix for ${payload.title} is not found`,
+        `Valid course prefix for ${payload.title} is not found!`,
       );
     }
 

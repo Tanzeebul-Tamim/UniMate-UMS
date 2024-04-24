@@ -2,7 +2,7 @@ import sampleAdmin from '../../../../sample/admin.json';
 import { generateSearchableFields } from '../../utils/generateSearchableFields';
 import { TDesignation } from './admin.interface';
 
-export const Designations: TDesignation[] = [
+export const AdminDesignations: TDesignation[] = [
   'system administrator',
   'database administrator',
   'network administrator',

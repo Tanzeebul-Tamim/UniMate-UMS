@@ -12,7 +12,7 @@ const createManagementDepartment = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Management department is created successfully',
+    message: 'Management department has been created successfully',
     data: result,
   });
 });

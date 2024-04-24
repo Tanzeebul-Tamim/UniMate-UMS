@@ -2,7 +2,7 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { AcademicFaculty } from '../academicFaculty/academicFaculty.model';
 import { createDepartmentFacultyValidation } from './academicDepartment.utils';
 import { AcademicDepartmentSearchableFields } from './academicDepartment.constant';
-import { TAcademicDepartment } from './academicDepartment.interface';
+import { TAcademicDepartment, TUpdateAcademicDepartment } from './academicDepartment.interface';
 import { AcademicDepartment } from './academicDepartment.model';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 import AppError from '../../errors/AppError';
@@ -10,21 +10,25 @@ import httpStatus from 'http-status';
 
 const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
   const academicFaculty = await AcademicFaculty.findById(
-    payload.academicFaculty,
+    payload?.academicFaculty,
   );
 
-  if (academicFaculty) {
-    const departmentFacultyValidation = createDepartmentFacultyValidation({
-      facultyName: academicFaculty?.name,
-      departmentName: payload.name,
-    });
-
-    if (departmentFacultyValidation) {
-      const result = await AcademicDepartment.create(payload);
-      return result;
-    }
-  } else {
+  //* Check if the academic-faculty exists or not
+  if (!academicFaculty) {
     throw new AppError(httpStatus.NOT_FOUND, 'Academic Faculty not found!');
+  }
+
+  const departmentFacultyValidation = createDepartmentFacultyValidation({
+    facultyName: academicFaculty?.name,
+    departmentName: payload.name,
+  });
+
+  if (departmentFacultyValidation) {
+    const result = (await AcademicDepartment.create(payload)).populate(
+      'academicFaculty',
+    );
+
+    return result;
   }
 };
 
@@ -58,11 +62,12 @@ const getAnAcademicDepartmentFromDB = async (id: string) => {
 
 const updateAnAcademicDepartmentIntoDB = async (
   id: string,
-  payload: Partial<TAcademicDepartment>,
+  payload: TUpdateAcademicDepartment,
 ) => {
   restrictFieldsValidator(payload, AcademicDepartmentSearchableFields);
   const result = await AcademicDepartment.findByIdAndUpdate(id, payload, {
     new: true,
+    runValidators: true,
   }).populate({
     path: 'academicFaculty',
     select: 'name',

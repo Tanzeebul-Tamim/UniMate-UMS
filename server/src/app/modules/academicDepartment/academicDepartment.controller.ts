@@ -10,7 +10,7 @@ const createAcademicDepartment = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Academic department is created successfully',
+    message: 'Academic department has been created successfully',
     data: result,
   });
 });

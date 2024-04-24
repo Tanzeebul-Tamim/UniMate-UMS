@@ -8,7 +8,10 @@ import {
   AcademicSemesterSearchableFields,
   AcademicSemesterUpdatableFields,
 } from './academicSemester.constant';
-import { TAcademicSemester } from './academicSemester.interface';
+import {
+  TAcademicSemester,
+  TUpdateAcademicSemester,
+} from './academicSemester.interface';
 import { AcademicSemester } from './academicSemester.model';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 
@@ -43,7 +46,7 @@ const getAnAcademicSemesterFromDB = async (id: string) => {
 
 const updateAnAcademicSemesterIntoDB = async (
   id: string,
-  payload: Partial<TAcademicSemester>,
+  payload: TUpdateAcademicSemester,
 ) => {
   restrictFieldsValidator(payload, AcademicSemesterUpdatableFields);
   const getSemesterInfo = (await AcademicSemester.findById(
@@ -57,6 +60,7 @@ const updateAnAcademicSemesterIntoDB = async (
 
   const result = await AcademicSemester.findByIdAndUpdate(id, updatedSemester, {
     new: true,
+    runValidators: true,
   });
 
   return result;

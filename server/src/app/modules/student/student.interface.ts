@@ -58,7 +58,7 @@ type TExcludeProperties =
   | 'academicDepartment'
   | 'isDeleted';
 
-export type TUpdateStudent = Omit<TStudent, TExcludeProperties>;
+export type TUpdateStudent = Partial<Omit<TStudent, TExcludeProperties>>;
 
 //* For creating static
 export interface StudentModel extends Model<TStudent> {

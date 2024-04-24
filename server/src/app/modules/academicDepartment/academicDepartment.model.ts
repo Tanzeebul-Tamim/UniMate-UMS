@@ -44,7 +44,7 @@ academicDepartmentSchema.pre('findOneAndUpdate', async function (next) {
   const doesDepartmentExist = await AcademicDepartment.findOne(query);
 
   if (!doesDepartmentExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Academic department not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Academic department not found!');
   }
   next();
 });

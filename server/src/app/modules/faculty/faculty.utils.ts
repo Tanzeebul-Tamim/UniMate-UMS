@@ -3,6 +3,7 @@ import AppError from '../../errors/AppError';
 import { Course, CourseFaculty } from '../course/course.model';
 import { Types } from 'mongoose';
 
+//* Get the assigned courses of a faculty
 export const getFacultyAssignedCourses = async (facultyID: Types.ObjectId) => {
   const facultyId = facultyID.toString();
   const courseFacultyInfo = await CourseFaculty.find();

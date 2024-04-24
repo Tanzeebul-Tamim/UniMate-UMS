@@ -34,12 +34,13 @@ const getAnAcademicFacultyFromDB = async (id: string) => {
 
 const updateAnAcademicFacultyIntoDB = async (
   id: string,
-  payload: Partial<TAcademicFaculty>,
+  payload: TAcademicFaculty,
 ) => {
   restrictFieldsValidator(payload, AcademicFacultyUpdatableFields);
   
   const result = await AcademicFaculty.findByIdAndUpdate(id, payload, {
     new: true,
+    runValidators: true,
   });
 
   return result;

@@ -59,7 +59,7 @@ type TExcludeProperties =
   | 'academicDepartment'
   | 'isDeleted';
 
-export type TUpdateFaculty = Omit<TFaculty, TExcludeProperties>;
+export type TUpdateFaculty = Partial<Omit<TFaculty, TExcludeProperties>>;
 
 //* For creating static
 export interface FacultyModel extends Model<TFaculty> {

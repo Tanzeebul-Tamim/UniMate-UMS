@@ -66,6 +66,18 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
     }
 
+    //* Populate the "admission semester" field in the newStudent object
+    await newStudent[0].populate('admissionSemester');
+
+    //* Populate the "academic department" field in the newStudent object
+    await newStudent[0].populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+        select: 'name',
+      },
+    });
+
     //* Commit and end session after successful transactions
     await session.commitTransaction();
     await session.endSession();
@@ -129,6 +141,15 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create faculty');
     }
 
+    //* Populate the "academic department" field in the newFaculty object
+    await newFaculty[0].populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+        select: 'name',
+      },
+    });
+
     //* Commit and end session after successful transactions
     await session.commitTransaction();
     await session.endSession();
@@ -191,6 +212,12 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
     if (!newAdmin.length) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create admin');
     }
+
+    //* Populate the "management department" field in the newAdmin object
+    await newAdmin[0].populate({
+      path: 'managementDepartment',
+      select: 'name',
+    });
 
     //* Commit and end session after successful transactions
     await session.commitTransaction();

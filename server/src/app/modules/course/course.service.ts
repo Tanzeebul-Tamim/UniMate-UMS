@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import { CourseSearchableFields } from './course.constant';
-import { TCourse } from './course.interface';
+import { TCourse, TUpdateCourse } from './course.interface';
 import { Course, CourseFaculty } from './course.model';
 import mongoose, { Types } from 'mongoose';
 import {
@@ -13,7 +13,10 @@ import { Faculty } from '../faculty/faculty.model';
 
 const createCourseIntoDB = async (payload: TCourse) => {
   createTitlePrefixValidator(payload);
-  const result = await Course.create(payload);
+  const result = (await Course.create(payload)).populate({
+    path: 'prerequisiteCourses.course',
+    select: '-prerequisiteCourses',
+  });
   return result;
 };
 
@@ -57,7 +60,7 @@ const getAssignedFacultiesOfACourseFromDB = async (id: string) => {
   }
 };
 
-const updateACourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
+const updateACourseIntoDB = async (id: string, payload: TUpdateCourse) => {
   //* start a session
   const session = await mongoose.startSession();
 
@@ -123,7 +126,7 @@ const updateACourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
         if (!existingPrerequisiteIDs?.includes(elem)) {
           throw new AppError(
             httpStatus.NOT_FOUND,
-            `${elem} Course not found in the document`,
+            `${elem} Course not found in the document!`,
           );
         }
       });
@@ -176,7 +179,7 @@ const updateACourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
         if (!existingCourseIDs?.includes(elem.course.toString())) {
           throw new AppError(
             httpStatus.NOT_FOUND,
-            `${elem.course} Course not found`,
+            `${elem.course} Course not found!`,
           );
         }
 
@@ -268,7 +271,7 @@ const assignFacultiesIntoCourseIntoDB = async (
     }
 
     if (!existingFacultyIDs?.includes(elem.toString())) {
-      throw new AppError(httpStatus.NOT_FOUND, `${elem} Faculty not found`);
+      throw new AppError(httpStatus.NOT_FOUND, `${elem} Faculty not found!`);
     }
   });
 
@@ -312,7 +315,7 @@ const removeFacultiesFromCourseFromDB = async (
   });
 
   if (!facultyInfoForAssigningIntoCourse) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Course not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Course not found!');
   }
 
   const existingFacultyIDs =
@@ -330,7 +333,7 @@ const removeFacultiesFromCourseFromDB = async (
     if (!existingFacultyIDs?.includes(elem.toString())) {
       throw new AppError(
         httpStatus.NOT_FOUND,
-        `${elem} Faculty not found in the document`,
+        `${elem} Faculty not found in the document!`,
       );
     }
   });

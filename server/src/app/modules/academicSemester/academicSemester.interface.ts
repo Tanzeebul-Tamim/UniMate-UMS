@@ -23,7 +23,9 @@ export type TAcademicSemester = {
   endMonth: TMonth;
 };
 
-export type TUpdateAcademicSemester = Pick<TAcademicSemester, 'name' | 'year'>;
+export type TUpdateAcademicSemester = Partial<
+  Pick<TAcademicSemester, 'name' | 'year'>
+>;
 
 export type TAcademicSemesterNameCodeMapper = {
   // eslint-disable-next-line no-unused-vars
