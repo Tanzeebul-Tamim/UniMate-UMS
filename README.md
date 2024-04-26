@@ -1,6 +1,8 @@
-# UniMate - University Management System Application
+# UniMate
 
-## This repository contains a MERN-stack MVP project aimed at showcasing the core functionalities of a university management system, built for practice purposes.
+## University Management System Application
+
+### This repository contains a MERN-stack MVP project aimed at showcasing the core functionalities of a university management system, built for practice purposes.
 
 ### A user-friendly system to manage faculty, courses, students, semesters and more. Perfect for universities and educational institutions.
 
