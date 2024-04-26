@@ -13,20 +13,23 @@ import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 import { getFacultyAssignedCourses } from './faculty.utils';
 
 const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
-  const facultyQuery = new QueryBuilder(Faculty.find(), query)
+  const facultyQuery = new QueryBuilder(
+    Faculty.find().populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+        select: 'name',
+      },
+    }),
+    query,
+  )
     .search(FacultySearchableFields)
     .filter()
     .sort()
     .paginate()
     .fields();
 
-  const result = await facultyQuery.modelQuery.populate({
-    path: 'academicDepartment',
-    populate: {
-      path: 'academicFaculty',
-      select: 'name',
-    },
-  });
+  const result = await facultyQuery.modelQuery;
 
   return result;
 };
@@ -56,6 +59,7 @@ const getAssignedCoursesOfAFacultyFromDB = async (id: string) => {
 
 const updateAFacultyFromDB = async (id: string, payload: TUpdateFaculty) => {
   restrictFieldsValidator(payload, FacultyUpdatableFields);
+  
   const { name, ...remainingFacultyData } = payload;
   const modifiedPayload: Record<string, unknown> = { ...remainingFacultyData };
 

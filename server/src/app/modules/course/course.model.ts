@@ -81,63 +81,89 @@ courseSchema.virtual('courseCode').get(function () {
 
 //* Query middleware
 courseSchema.pre('save', async function (next) {
-  const doesCourseExist = await Course.findOne({
-    prefix: this.prefix,
-    code: this.code,
-  });
+  try {
+    const doesCourseExist = await Course.findOne({
+      prefix: this.prefix,
+      code: this.code,
+    });
 
-  const doesCourseTitleExist = await Course.findOne({
-    title: this.title,
-  });
+    const doesCourseTitleExist = await Course.findOne({
+      title: this.title,
+    });
 
-  if (doesCourseExist) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `${this.prefix}${this.code} course already exists`,
-    );
+    if (doesCourseExist) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        `${this.prefix}${this.code} course already exists`,
+      );
+    }
+
+    if (doesCourseTitleExist) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        `${this.title} course already exists`,
+      );
+    }
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
   }
-
-  if (doesCourseTitleExist) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `${this.title} course already exists`,
-    );
-  }
-  next();
 });
 
 courseSchema.pre('findOneAndUpdate', async function (next) {
-  const query = this.getQuery();
-  const doesCourseExistOrNot = await Course.findOne(query);
+  try {
+    const query = this.getQuery();
+    const doesCourseExistOrNot = await Course.findOne(query);
 
-  if (!doesCourseExistOrNot) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Course not found!');
+    if (!doesCourseExistOrNot) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Course not found!');
+    }
+
+    const updatedCourse = this.getUpdate() as Partial<TCourse>;
+    const { title, prefix, code } = updatedCourse;
+
+    const doesCourseExist = await Course.findOne({
+      prefix,
+      code,
+    });
+
+    const doesCourseTitleExist = await Course.findOne({
+      title,
+    });
+
+    if (doesCourseExist) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        `${prefix}${code} course already exists`,
+      );
+    }
+
+    if (doesCourseTitleExist) {
+      throw new AppError(httpStatus.CONFLICT, `${title} course already exists`);
+    }
+
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
   }
-
-  const updatedCourse = this.getUpdate() as Partial<TCourse>;
-  const { title, prefix, code } = updatedCourse;
-
-  const doesCourseExist = await Course.findOne({
-    prefix,
-    code,
-  });
-
-  const doesCourseTitleExist = await Course.findOne({
-    title,
-  });
-
-  if (doesCourseExist) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `${prefix}${code} course already exists`,
-    );
-  }
-
-  if (doesCourseTitleExist) {
-    throw new AppError(httpStatus.CONFLICT, `${title} course already exists`);
-  }
-
-  next();
 });
 
 export const Course = model<TCourse>('Course', courseSchema);
@@ -161,14 +187,27 @@ const courseFacultySchema = new Schema<TCourseFaculty>(
 );
 
 courseFacultySchema.pre('findOneAndUpdate', async function (next) {
-  const query = this.getQuery();
-  const doesCourseExistOrNot = await Course.findOne(query);
+  try {
+    const query = this.getQuery();
+    const doesCourseExistOrNot = await Course.findOne(query);
 
-  if (!doesCourseExistOrNot) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Course not found!');
+    if (!doesCourseExistOrNot) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Course not found!');
+    }
+
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
   }
-
-  next();
 });
 
 export const CourseFaculty = model<TCourseFaculty>(

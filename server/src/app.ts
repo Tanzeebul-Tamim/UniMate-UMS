@@ -19,7 +19,7 @@ app.use(cors());
 app.use('/api/v1', router);
 
 const test = async (req: Request, res: Response) => {
-  res.send(`😈 PH University server is listening on port ${config.port} 😈`);
+  res.send(`😈 UniMate University server is listening on port ${config.port} 😈`);
 };
 
 app.get('/', test);

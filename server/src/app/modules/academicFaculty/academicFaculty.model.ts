@@ -20,22 +20,48 @@ const academicFacultySchema = new Schema<TAcademicFaculty>(
 );
 
 academicFacultySchema.pre('save', async function (next) {
-  const doesFacultyExist = await AcademicFaculty.findOne({ name: this.name });
+  try {
+    const doesFacultyExist = await AcademicFaculty.findOne({ name: this.name });
 
-  if (doesFacultyExist) {
-    throw new AppError(httpStatus.CONFLICT, `${this.name} already exists`);
+    if (doesFacultyExist) {
+      throw new AppError(httpStatus.CONFLICT, `${this.name} already exists`);
+    }
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
   }
-  next();
 });
 
 academicFacultySchema.pre('findOneAndUpdate', async function (next) {
-  const query = this.getQuery();
-  const doesFacultyExist = await AcademicFaculty.findOne(query);
+  try {
+    const query = this.getQuery();
+    const doesFacultyExist = await AcademicFaculty.findOne(query);
 
-  if (!doesFacultyExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Academic faculty not found!');
+    if (!doesFacultyExist) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Academic faculty not found!');
+    }
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
   }
-  next();
 });
 
 export const AcademicFaculty = model<TAcademicFaculty>(

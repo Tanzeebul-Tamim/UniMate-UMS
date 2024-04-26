@@ -1,8 +1,9 @@
 import QueryBuilder from '../../builder/QueryBuilder';
-import { ManagementDepartmentSearchableFields } from './managementDepartment.constant';
+import {
+  ManagementDepartmentSearchableFields,
+} from './managementDepartment.constant';
 import { TManagementDepartment } from './managementDepartment.interface';
 import { ManagementDepartment } from './managementDepartment.model';
-import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 
 const createManagementDepartmentIntoDB = async (
   payload: TManagementDepartment,
@@ -37,7 +38,6 @@ const updateAManagementDepartmentIntoDB = async (
   id: string,
   payload: TManagementDepartment,
 ) => {
-  restrictFieldsValidator(payload, ManagementDepartmentSearchableFields);
   const result = await ManagementDepartment.findByIdAndUpdate(id, payload, {
     new: true,
     runValidators: true,

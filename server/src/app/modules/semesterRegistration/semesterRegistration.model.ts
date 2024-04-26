@@ -29,17 +29,30 @@ const semesterRegistrationSchema = new Schema<TSemesterRegistrationDB>(
 );
 
 semesterRegistrationSchema.pre('save', async function (next) {
-  const doesSemesterRegistrationExist = await SemesterRegistration.findOne({
-    academicSemester: this?.academicSemester,
-  });
+  try {
+    const doesSemesterRegistrationExist = await SemesterRegistration.findOne({
+      academicSemester: this?.academicSemester,
+    });
 
-  if (doesSemesterRegistrationExist) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `This academic semester has been registered already`,
-    );
+    if (doesSemesterRegistrationExist) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        `This academic semester has been registered already`,
+      );
+    }
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
   }
-  next();
 });
 
 export const SemesterRegistration = model<TSemesterRegistrationDB>(

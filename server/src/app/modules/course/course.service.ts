@@ -21,17 +21,20 @@ const createCourseIntoDB = async (payload: TCourse) => {
 };
 
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
-  const courseQuery = new QueryBuilder(Course.find(), query)
+  const courseQuery = new QueryBuilder(
+    Course.find().populate({
+      path: 'prerequisiteCourses.course',
+      select: ['title', 'prefix', 'code', 'credits'],
+    }),
+    query,
+  )
     .search(CourseSearchableFields)
     .filter()
     .sort()
     .paginate()
     .fields();
 
-  const result = await courseQuery.modelQuery.populate({
-    path: 'prerequisiteCourses.course',
-    select: ['title', 'prefix', 'code', 'credits'],
-  });
+  const result = await courseQuery.modelQuery;
 
   return result;
 };
@@ -45,9 +48,12 @@ const getACourseFromDB = async (id: string) => {
 };
 
 const getAssignedFacultiesOfACourseFromDB = async (id: string) => {
-  const result = await CourseFaculty.findOne({ course: id }).populate({
-    path: 'faculties',
-  });
+  const result = await CourseFaculty.findOne({ course: id })
+    .populate({
+      path: 'course',
+      select: 'title',
+    })
+    .populate('faculties');
 
   if (result) {
     if (result.faculties.length > 0) {

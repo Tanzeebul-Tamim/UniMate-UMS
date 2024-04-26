@@ -1,9 +1,5 @@
 import QueryBuilder from '../../builder/QueryBuilder';
-import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
-import {
-  AcademicFacultySearchableFields,
-  AcademicFacultyUpdatableFields,
-} from './academicFaculty.constant';
+import { AcademicFacultySearchableFields } from './academicFaculty.constant';
 import { TAcademicFaculty } from './academicFaculty.interface';
 import { AcademicFaculty } from './academicFaculty.model';
 
@@ -36,8 +32,6 @@ const updateAnAcademicFacultyIntoDB = async (
   id: string,
   payload: TAcademicFaculty,
 ) => {
-  restrictFieldsValidator(payload, AcademicFacultyUpdatableFields);
-  
   const result = await AcademicFaculty.findByIdAndUpdate(id, payload, {
     new: true,
     runValidators: true,

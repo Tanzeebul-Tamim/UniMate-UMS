@@ -10,5 +10,3 @@ export const ManagementDepartmentNames: TManagementDepartmentName[] = [
 ];
 
 export const ManagementDepartmentSearchableFields = ['name'];
-
-export const ManagementDepartmentUpdatableFields = ['name'];

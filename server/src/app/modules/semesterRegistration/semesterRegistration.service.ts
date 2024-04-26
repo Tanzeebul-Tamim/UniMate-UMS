@@ -65,7 +65,7 @@ const getAllSemesterRegistrationsFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const semesterRegistrationQuery = new QueryBuilder(
-    SemesterRegistration.find(),
+    SemesterRegistration.find().populate('academicSemester'),
     query,
   )
     .filter()
@@ -74,7 +74,7 @@ const getAllSemesterRegistrationsFromDB = async (
     .fields();
 
   const result =
-    await semesterRegistrationQuery.modelQuery.populate('academicSemester');
+    await semesterRegistrationQuery.modelQuery;
 
   return result;
 };
@@ -89,6 +89,7 @@ const updateASemesterRegistrationIntoDB = async (
   id: string,
   payload: TUpdateSemesterRegistrationClient,
 ) => {
+  restrictFieldsValidator(payload, SemesterRegistrationUpdatableFields);
   const currentSemester = await SemesterRegistration.findById(id);
   const currentSemesterStatus = currentSemester?.status;
 
@@ -100,7 +101,6 @@ const updateASemesterRegistrationIntoDB = async (
     );
   }
 
-  restrictFieldsValidator(payload, SemesterRegistrationUpdatableFields);
   const currentSemesterRegistrationInfo = (await SemesterRegistration.findById(
     id,
   )) as TSemesterRegistrationDB;

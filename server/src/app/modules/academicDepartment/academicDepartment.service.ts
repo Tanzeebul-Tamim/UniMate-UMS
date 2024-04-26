@@ -1,12 +1,17 @@
 import QueryBuilder from '../../builder/QueryBuilder';
 import { AcademicFaculty } from '../academicFaculty/academicFaculty.model';
 import { createDepartmentFacultyValidation } from './academicDepartment.utils';
-import { AcademicDepartmentSearchableFields } from './academicDepartment.constant';
-import { TAcademicDepartment, TUpdateAcademicDepartment } from './academicDepartment.interface';
+import {
+  AcademicDepartmentSearchableFields,
+  AcademicDepartmentUpdatableFields,
+  academicDepartmentNameFacultyMapper,
+} from './academicDepartment.constant';
+import { TAcademicDepartment } from './academicDepartment.interface';
 import { AcademicDepartment } from './academicDepartment.model';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
+import { TAcademicFacultyName } from '../academicFaculty/academicFaculty.interface';
 
 const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
   const academicFaculty = await AcademicFaculty.findById(
@@ -36,7 +41,10 @@ const getAllAcademicDepartmentsFromDB = async (
   query: Record<string, unknown>,
 ) => {
   const academicDepartmentQuery = new QueryBuilder(
-    AcademicDepartment.find(),
+    AcademicDepartment.find().populate({
+      path: 'academicFaculty',
+      select: 'name',
+    }),
     query,
   )
     .search(AcademicDepartmentSearchableFields)
@@ -45,10 +53,7 @@ const getAllAcademicDepartmentsFromDB = async (
     .paginate()
     .fields();
 
-  const result = await academicDepartmentQuery.modelQuery.populate({
-    path: 'academicFaculty',
-    select: 'name',
-  });
+  const result = await academicDepartmentQuery.modelQuery;
   return result;
 };
 
@@ -62,9 +67,34 @@ const getAnAcademicDepartmentFromDB = async (id: string) => {
 
 const updateAnAcademicDepartmentIntoDB = async (
   id: string,
-  payload: TUpdateAcademicDepartment,
+  payload: Partial<TAcademicDepartment>,
 ) => {
-  restrictFieldsValidator(payload, AcademicDepartmentSearchableFields);
+  restrictFieldsValidator(payload, AcademicDepartmentUpdatableFields);
+
+  let facultyName = '';
+
+  //* Iterate through faculties and check if department belongs to any
+  for (const faculty in academicDepartmentNameFacultyMapper) {
+    if (faculty && payload && payload.name) {
+      if (
+        academicDepartmentNameFacultyMapper[
+          faculty as TAcademicFacultyName
+        ]?.includes(payload?.name)
+      ) {
+        facultyName = faculty;
+        break;
+      }
+    }
+  }
+
+  const getAcademicFacultyInfo = await AcademicFaculty.findOne({
+    name: facultyName,
+  });
+
+  if (getAcademicFacultyInfo) {
+    payload.academicFaculty = getAcademicFacultyInfo._id;
+  }
+
   const result = await AcademicDepartment.findByIdAndUpdate(id, payload, {
     new: true,
     runValidators: true,

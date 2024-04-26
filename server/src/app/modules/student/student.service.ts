@@ -12,26 +12,28 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
-  const studentQuery = new QueryBuilder(Student.find(), query)
+  const studentQuery = new QueryBuilder(
+    Student.find()
+      .populate({
+        path: 'academicDepartment',
+        populate: {
+          path: 'academicFaculty',
+          select: 'name',
+        },
+      })
+      .populate({
+        path: 'admissionSemester',
+        select: ['name', 'year', 'startMonth', 'endMonth'],
+      }),
+    query,
+  )
     .search(StudentSearchableFields)
     .filter()
     .sort()
     .paginate()
     .fields();
 
-  const result = await studentQuery.modelQuery
-    .populate({
-      path: 'academicDepartment',
-      populate: {
-        path: 'academicFaculty',
-        select: 'name',
-      },
-    })
-    .populate({
-      path: 'admissionSemester',
-      select: ['name', 'year', 'startMonth', 'endMonth'],
-    });
-
+  const result = await studentQuery.modelQuery;
   return result;
 };
 

@@ -50,44 +50,70 @@ const academicSemesterSchema = new Schema<TAcademicSemester>(
 );
 
 academicSemesterSchema.pre('save', async function (next) {
-  const doesSemesterExist = await AcademicSemester.findOne({
-    year: this.year,
-    name: this.name,
-  });
+  try {
+    const doesSemesterExist = await AcademicSemester.findOne({
+      year: this.year,
+      name: this.name,
+    });
 
-  if (doesSemesterExist) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `${this.name}-${this.year} academic semester already exists`,
-    );
+    if (doesSemesterExist) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        `${this.name}-${this.year} academic semester already exists`,
+      );
+    }
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
   }
-  next();
 });
 
 academicSemesterSchema.pre('findOneAndUpdate', async function (next) {
-  const query = this.getQuery();
-  const doesSemesterExistOrNot = await AcademicSemester.findOne(query);
+  try {
+    const query = this.getQuery();
+    const doesSemesterExistOrNot = await AcademicSemester.findOne(query);
 
-  if (!doesSemesterExistOrNot) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Academic semester not found!');
+    if (!doesSemesterExistOrNot) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Academic semester not found!');
+    }
+
+    const updatedSemester = this.getUpdate() as TAcademicSemester;
+    const { year, name } = updatedSemester;
+
+    const doesSemesterAlreadyExist = await AcademicSemester.findOne({
+      year,
+      name,
+    });
+
+    if (doesSemesterAlreadyExist) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        `${name}-${year} semester already exists`,
+      );
+    }
+
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
   }
-
-  const updatedSemester = this.getUpdate() as TAcademicSemester;
-  const { year, name } = updatedSemester;
-
-  const doesSemesterAlreadyExist = await AcademicSemester.findOne({
-    year,
-    name,
-  });
-
-  if (doesSemesterAlreadyExist) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `${name}-${year} semester already exists`,
-    );
-  }
-
-  next();
 });
 
 export const AcademicSemester = model<TAcademicSemester>(

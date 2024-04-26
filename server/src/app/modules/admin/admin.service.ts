@@ -9,17 +9,20 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 
 const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
-  const adminQuery = new QueryBuilder(Admin.find(), query)
+  const adminQuery = new QueryBuilder(
+    Admin.find().populate({
+      path: 'managementDepartment',
+      select: 'name',
+    }),
+    query,
+  )
     .search(AdminSearchableFields)
     .filter()
     .sort()
     .paginate()
     .fields();
 
-  const result = await adminQuery.modelQuery.populate({
-    path: 'managementDepartment',
-    select: 'name',
-  });
+  const result = await adminQuery.modelQuery;
 
   return result;
 };
@@ -35,6 +38,7 @@ const getAnAdminFromDB = async (id: string) => {
 
 const updateAnAdminFromDB = async (id: string, payload: TUpdateAdmin) => {
   restrictFieldsValidator(payload, AdminUpdatableFields);
+  
   const { name, ...remainingAdminData } = payload;
   const modifiedPayload: Record<string, unknown> = { ...remainingAdminData };
 

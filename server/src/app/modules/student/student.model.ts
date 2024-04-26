@@ -154,81 +154,159 @@ studentSchema.virtual('fullName').get(function () {
 
 //* Query middleware
 studentSchema.pre('save', async function (next) {
-  const isDepartmentValid = await AcademicDepartment.findById(
-    this.academicDepartment,
-  );
+  try {
+    const isDepartmentValid = await AcademicDepartment.findById(
+      this.academicDepartment,
+    );
 
-  const isSemesterValid = await AcademicSemester.findById(
-    this.admissionSemester,
-  );
+    const isSemesterValid = await AcademicSemester.findById(
+      this.admissionSemester,
+    );
 
-  if (!isSemesterValid) {
-    throw new AppError(httpStatus.CONFLICT, 'Invalid academic semester');
-  }
+    if (!isSemesterValid) {
+      throw new AppError(httpStatus.CONFLICT, 'Invalid academic semester');
+    }
 
-  if (!isDepartmentValid) {
-    throw new AppError(httpStatus.CONFLICT, 'Invalid academic department');
-  }
+    if (!isDepartmentValid) {
+      throw new AppError(httpStatus.CONFLICT, 'Invalid academic department');
+    }
 
-  next();
-});
-
-studentSchema.pre('find', function (next) {
-  this.find({ isDeleted: { $eq: false } });
-  next();
-});
-
-studentSchema.pre('findOne', async function (next) {
-  this.findOne({ isDeleted: { $eq: false } });
-  next();
-});
-
-studentSchema.pre('findOneAndUpdate', function (next) {
-  this.find({ isDeleted: { $eq: false } });
-  next();
-});
-
-studentSchema.pre('updateOne', function (next) {
-  this.find({ isDeleted: { $eq: false } });
-  next();
-});
-
-studentSchema.pre('findOneAndUpdate', async function (next) {
-  const query = this.getQuery();
-  const doesStudentExistOrNot = await Student.findOne(query);
-
-  if (!doesStudentExistOrNot) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Student not found!');
-  }
-
-  const updatedStudent = this.getUpdate() as Partial<TStudent>;
-  const { contactNo, emergencyContactNo } = updatedStudent;
-
-  if (contactNo || emergencyContactNo) {
-    const doesContactNoAlreadyExist = await Student.findOne({
-      $or: [
-        { contactNo },
-        { emergencyContactNo },
-        { contactNo: emergencyContactNo },
-        { emergencyContactNo: contactNo },
-      ],
-    });
-
-    if (doesContactNoAlreadyExist) {
-      throw new AppError(
-        httpStatus.CONFLICT,
-        contactNo && !emergencyContactNo
-          ? `This contact no ${contactNo} is already in use. Provide a different one`
-          : !contactNo && emergencyContactNo
-            ? `This emergency contact no ${emergencyContactNo} is already in use. Provide a different one`
-            : contactNo && emergencyContactNo
-              ? `This contact no ${contactNo} or this emergency contact no ${emergencyContactNo} is already in use. Provide a different one`
-              : '',
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
       );
     }
   }
+});
 
-  next();
+studentSchema.pre('find', function (next) {
+  try {
+    this.find({ isDeleted: { $eq: false } });
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
+  }
+});
+
+studentSchema.pre('findOne', async function (next) {
+  try {
+    this.findOne({ isDeleted: { $eq: false } });
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
+  }
+});
+
+studentSchema.pre('findOneAndUpdate', function (next) {
+  try {
+    this.find({ isDeleted: { $eq: false } });
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
+  }
+});
+
+studentSchema.pre('updateOne', function (next) {
+  try {
+    this.find({ isDeleted: { $eq: false } });
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
+  }
+});
+
+studentSchema.pre('findOneAndUpdate', async function (next) {
+  try {
+    const query = this.getQuery();
+    const doesStudentExistOrNot = await Student.findOne(query);
+
+    if (!doesStudentExistOrNot) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Student not found!');
+    }
+
+    const updatedStudent = this.getUpdate() as Partial<TStudent>;
+    const { contactNo, emergencyContactNo } = updatedStudent;
+
+    if (contactNo || emergencyContactNo) {
+      const doesContactNoAlreadyExist = await Student.findOne({
+        $or: [
+          { contactNo },
+          { emergencyContactNo },
+          { contactNo: emergencyContactNo },
+          { emergencyContactNo: contactNo },
+        ],
+      });
+
+      if (doesContactNoAlreadyExist) {
+        throw new AppError(
+          httpStatus.CONFLICT,
+          contactNo && !emergencyContactNo
+            ? `This contact no ${contactNo} is already in use. Provide a different one`
+            : !contactNo && emergencyContactNo
+              ? `This emergency contact no ${emergencyContactNo} is already in use. Provide a different one`
+              : contactNo && emergencyContactNo
+                ? `This contact no ${contactNo} or this emergency contact no ${emergencyContactNo} is already in use. Provide a different one`
+                : '',
+        );
+      }
+    }
+
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
+  }
 });
 
 //* creating a custom static method

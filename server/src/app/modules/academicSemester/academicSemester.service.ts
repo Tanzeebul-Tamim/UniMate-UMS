@@ -49,6 +49,7 @@ const updateAnAcademicSemesterIntoDB = async (
   payload: TUpdateAcademicSemester,
 ) => {
   restrictFieldsValidator(payload, AcademicSemesterUpdatableFields);
+  
   const getSemesterInfo = (await AcademicSemester.findById(
     id,
   )) as TAcademicSemester;

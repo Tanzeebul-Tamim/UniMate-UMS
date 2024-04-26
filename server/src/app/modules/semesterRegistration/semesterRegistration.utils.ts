@@ -144,7 +144,7 @@ export const validateAndModifyPayloadForCreatingSemesterRegistration = (
   } else if (startTime === '' || endTime === '') {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      'Please enter both start and end time',
+      'Start time and end time cannot be empty strings',
     );
   } else {
     if ((!startTime && endTime) || (startTime && !endTime)) {
@@ -205,10 +205,18 @@ export const validateAndModifyPayloadForCreatingSemesterRegistration = (
     maxCredit,
   };
 
-  //* Get semester status based on current date
+  //* Ensure that the start date comes before the end date
   const startDateObj = new Date(startDate);
   const endDateObj = new Date(endDate);
 
+  if (startDateObj.getTime() >= endDateObj.getTime()) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'End date cannot come before start date',
+    );
+  }
+
+  //* Get semester status based on current date
   const today = new Date();
 
   if (

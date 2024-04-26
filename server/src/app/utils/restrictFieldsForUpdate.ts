@@ -1,3 +1,7 @@
+import {
+  TOfferedCourse,
+  TUpdateOfferedCourse,
+} from './../modules/offeredCourse/offeredCourse.interface';
 import httpStatus from 'http-status';
 import AppError from '../errors/AppError';
 import { TUpdateStudent } from '../modules/student/student.interface';
@@ -9,7 +13,6 @@ import { TUpdateAcademicDepartment } from '../modules/academicDepartment/academi
 import { TAcademicFaculty } from '../modules/academicFaculty/academicFaculty.interface';
 import { TManagementDepartment } from '../modules/managementDepartment/managementDepartment.interface';
 
-//* making sure that the payload contains either 'year' or 'name' only
 export const restrictFieldsValidator = (
   payload:
     | TUpdateStudent
@@ -19,7 +22,9 @@ export const restrictFieldsValidator = (
     | TUpdateAcademicSemester
     | TUpdateAcademicDepartment
     | TAcademicFaculty
-    | TManagementDepartment,
+    | TManagementDepartment
+    | Partial<TOfferedCourse>
+    | TUpdateOfferedCourse,
   allowedFields: string[],
 ) => {
   const payloadFields: string[] = Object.keys(payload);

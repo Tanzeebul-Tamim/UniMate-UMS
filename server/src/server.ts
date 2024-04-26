@@ -11,7 +11,7 @@ async function main() {
     await mongoose.connect(config.database_url as string);
     server = app.listen(config.port, () => {
       console.log(
-        `😇 PH-University Management System app is listening on port ${config.port} 😇`,
+        `😇 UniMate-University Management System app is listening on port ${config.port} 😇`,
       );
     });
   } catch (err) {

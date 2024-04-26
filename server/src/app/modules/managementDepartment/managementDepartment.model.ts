@@ -21,30 +21,56 @@ const managementDepartmentSchema = new Schema<TManagementDepartment>(
 );
 
 managementDepartmentSchema.pre('save', async function (next) {
-  const doesDepartmentExist = await ManagementDepartment.findOne({
-    name: this.name,
-  });
+  try {
+    const doesDepartmentExist = await ManagementDepartment.findOne({
+      name: this.name,
+    });
 
-  if (doesDepartmentExist) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `${this.name} management department already exists`,
-    );
+    if (doesDepartmentExist) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        `${this.name} management department already exists`,
+      );
+    }
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
   }
-  next();
 });
 
 managementDepartmentSchema.pre('findOneAndUpdate', async function (next) {
-  const query = this.getQuery();
-  const doesDepartmentExist = await ManagementDepartment.findOne(query);
+  try {
+    const query = this.getQuery();
+    const doesDepartmentExist = await ManagementDepartment.findOne(query);
 
-  if (!doesDepartmentExist) {
-    throw new AppError(
-      httpStatus.NOT_FOUND,
-      'Management department not found!',
-    );
+    if (!doesDepartmentExist) {
+      throw new AppError(
+        httpStatus.NOT_FOUND,
+        'Management department not found!',
+      );
+    }
+    next();
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        ),
+      );
+    }
   }
-  next();
 });
 
 export const ManagementDepartment = model<TManagementDepartment>(
