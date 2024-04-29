@@ -11,6 +11,9 @@ import {
 import QueryBuilder from '../../builder/QueryBuilder';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
 import { getFacultyAssignedCourses } from './faculty.utils';
+import { validateId } from '../../utils/idValidator';
+import { NextFunction } from 'express';
+import { removeMiddleName } from '../../utils/middleNameRemover';
 
 const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
   const facultyQuery = new QueryBuilder(
@@ -35,6 +38,8 @@ const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getAFacultyFromDB = async (id: string) => {
+  validateId(id, 'F', id[0]);
+
   const result = await Faculty.findOne({ id }).populate({
     path: 'academicDepartment',
     populate: {
@@ -47,6 +52,7 @@ const getAFacultyFromDB = async (id: string) => {
 };
 
 const getAssignedCoursesOfAFacultyFromDB = async (id: string) => {
+  validateId(id, 'F', id[0]);
   const facultyInfo = await Faculty.findOne({ id });
 
   if (facultyInfo) {
@@ -57,15 +63,38 @@ const getAssignedCoursesOfAFacultyFromDB = async (id: string) => {
   }
 };
 
-const updateAFacultyFromDB = async (id: string, payload: TUpdateFaculty) => {
+const updateAFacultyFromDB = async (
+  id: string,
+  payload: TUpdateFaculty,
+  next: NextFunction,
+) => {
+  validateId(id, 'F', id[0]);
   restrictFieldsValidator(payload, FacultyUpdatableFields);
-  
+
   const { name, ...remainingFacultyData } = payload;
   const modifiedPayload: Record<string, unknown> = { ...remainingFacultyData };
 
   if (name && Object.keys(name).length) {
-    for (const [key, value] of Object.entries(name)) {
-      modifiedPayload[`name.${key}`] = value;
+    if (name.middleName === null) {
+      try {
+        const modifiedName = await removeMiddleName(name, id, 'F');
+        modifiedPayload.name = modifiedName;
+      } catch (error) {
+        if (error instanceof AppError) {
+          next(error);
+        } else {
+          next(
+            new AppError(
+              httpStatus.INTERNAL_SERVER_ERROR,
+              'An unexpected error occurred!',
+            ),
+          );
+        }
+      }
+    } else {
+      for (const [key, value] of Object.entries(name)) {
+        modifiedPayload[`name.${key}`] = value;
+      }
     }
   }
 
@@ -84,6 +113,8 @@ const updateAFacultyFromDB = async (id: string, payload: TUpdateFaculty) => {
 };
 
 const deleteAFacultyFromDB = async (id: string) => {
+  validateId(id, 'F', id[0]);
+
   //* Start a session
   const session = await mongoose.startSession();
 

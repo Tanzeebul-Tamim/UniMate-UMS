@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { CourseServices } from './course.service';
+import AppError from '../../errors/AppError';
 
 const createCourse = catchAsync(async (req, res) => {
   const result = await CourseServices.createCourseIntoDB(req.body);
@@ -29,30 +30,38 @@ const getAllCourses = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
       success: false,
-      message: 'No courses found',
-      data: result,
+      message: 'No courses found!',
+      data: null,
     });
   }
 });
 
-const getACourse = catchAsync(async (req, res) => {
-  const { courseId } = req.params;
-  const result = await CourseServices.getACourseFromDB(courseId);
+const getACourse = catchAsync(async (req, res, next) => {
+  try {
+    const { courseId } = req.params;
+    const result = await CourseServices.getACourseFromDB(courseId);
 
-  if (result) {
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Course has been retrieved successfully',
-      data: result,
-    });
-  } else {
-    sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: 'Course not found!',
-      data: result,
-    });
+    if (result) {
+      sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Course has been retrieved successfully',
+        data: result,
+      });
+    } else {
+      throw new AppError(httpStatus.NOT_FOUND, 'Course not found!');
+    }
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else if (error instanceof Error) {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          error.message || 'An unexpected error occurred!',
+        ),
+      );
+    }
   }
 });
 

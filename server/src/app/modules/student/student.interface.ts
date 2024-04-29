@@ -11,6 +11,7 @@ export type TIndividualGuardian = {
   name: TName;
   occupation: string;
   contactNo: string;
+  email: string;
 };
 
 export type TGuardian = {

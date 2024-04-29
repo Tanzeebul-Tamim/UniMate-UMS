@@ -20,12 +20,12 @@ router.get(
   OfferedCourseControllers.getAnOfferedCourse,
 );
 
-// router.patch(
-//   '/:offeredCourseId',
-//   validateRequest(
-//     OfferedCourseValidations.updateOfferedCourseValidationSchema,
-//   ),
-//   OfferedCourseControllers.updateAnOfferedCourse,
-// );
+router.patch(
+  '/:offeredCourseId',
+  validateRequest(
+    OfferedCourseValidations.updateOfferedCourseValidationSchema,
+  ),
+  OfferedCourseControllers.updateAnOfferedCourse,
+);
 
 export const OfferedCourseRoutes = router;

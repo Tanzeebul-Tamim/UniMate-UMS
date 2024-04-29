@@ -19,7 +19,7 @@ export const OfferedCoursePermittedFields: string[] = [
   'remainingCapacity',
   'section',
   'days',
-  'timeSlot'
+  'timeSlot',
 ];
 
 export const OfferedCourseUpdatableFields: string[] = [
@@ -27,8 +27,7 @@ export const OfferedCourseUpdatableFields: string[] = [
   'maxCapacity',
   'remainingCapacity',
   'days',
-  'startTime',
-  'endTime',
+  'timeSlot',
 ];
 
 export const TimeSlots: Record<number, string[]> = {

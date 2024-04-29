@@ -2,6 +2,7 @@ import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import { AcademicSemesterServices } from './academicSemester.service';
+import AppError from '../../errors/AppError';
 
 const createAcademicSemester = catchAsync(async (req, res) => {
   const result = await AcademicSemesterServices.createAcademicSemesterIntoDB(
@@ -32,31 +33,39 @@ const getAllAcademicSemesters = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
       success: false,
-      message: 'No academic semesters found',
-      data: result,
+      message: 'No academic semesters found!',
+      data: null,
     });
   }
 });
 
-const getAnAcademicSemester = catchAsync(async (req, res) => {
-  const { semesterId } = req.params;
-  const result =
-    await AcademicSemesterServices.getAnAcademicSemesterFromDB(semesterId);
+const getAnAcademicSemester = catchAsync(async (req, res, next) => {
+  try {
+    const { semesterId } = req.params;
+    const result =
+      await AcademicSemesterServices.getAnAcademicSemesterFromDB(semesterId);
 
-  if (result) {
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Academic semester has been retrieved successfully',
-      data: result,
-    });
-  } else {
-    sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: 'Academic semester not found!',
-      data: result,
-    });
+    if (result) {
+      sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Academic semester has been retrieved successfully',
+        data: result,
+      });
+    } else {
+      throw new AppError(httpStatus.NOT_FOUND, 'Academic semester not found!');
+    }
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else if (error instanceof Error) {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          error.message || 'An unexpected error occurred!',
+        ),
+      );
+    }
   }
 });
 

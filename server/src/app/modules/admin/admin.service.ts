@@ -7,6 +7,9 @@ import { User } from '../user/user.model';
 import { AdminSearchableFields, AdminUpdatableFields } from './admin.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
+import { validateId } from '../../utils/idValidator';
+import { NextFunction } from 'express';
+import { removeMiddleName } from '../../utils/middleNameRemover';
 
 const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
   const adminQuery = new QueryBuilder(
@@ -28,6 +31,8 @@ const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getAnAdminFromDB = async (id: string) => {
+  validateId(id, 'A', id[0]);
+
   const result = await Admin.findOne({ id }).populate({
     path: 'managementDepartment',
     select: 'name',
@@ -36,15 +41,38 @@ const getAnAdminFromDB = async (id: string) => {
   return result;
 };
 
-const updateAnAdminFromDB = async (id: string, payload: TUpdateAdmin) => {
+const updateAnAdminFromDB = async (
+  id: string,
+  payload: TUpdateAdmin,
+  next: NextFunction,
+) => {
+  validateId(id, 'A', id[0]);
   restrictFieldsValidator(payload, AdminUpdatableFields);
-  
+
   const { name, ...remainingAdminData } = payload;
   const modifiedPayload: Record<string, unknown> = { ...remainingAdminData };
 
   if (name && Object.keys(name).length) {
-    for (const [key, value] of Object.entries(name)) {
-      modifiedPayload[`name.${key}`] = value;
+    if (name.middleName === null) {
+      try {
+        const modifiedName = await removeMiddleName(name, id, 'A');
+        modifiedPayload.name = modifiedName;
+      } catch (error) {
+        if (error instanceof AppError) {
+          next(error);
+        } else {
+          next(
+            new AppError(
+              httpStatus.INTERNAL_SERVER_ERROR,
+              'An unexpected error occurred!',
+            ),
+          );
+        }
+      }
+    } else {
+      for (const [key, value] of Object.entries(name)) {
+        modifiedPayload[`name.${key}`] = value;
+      }
     }
   }
 
@@ -60,6 +88,8 @@ const updateAnAdminFromDB = async (id: string, payload: TUpdateAdmin) => {
 };
 
 const deleteAnAdminFromDB = async (id: string) => {
+  validateId(id, 'A', id[0]);
+
   //* Start a session
   const session = await mongoose.startSession();
 

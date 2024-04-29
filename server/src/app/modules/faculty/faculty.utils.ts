@@ -22,9 +22,9 @@ export const getFacultyAssignedCourses = async (facultyID: Types.ObjectId) => {
       );
       return courseInfo;
     } else {
-      throw new AppError(httpStatus.NOT_FOUND, 'No assigned courses found');
+      throw new AppError(httpStatus.NOT_FOUND, 'No assigned courses found!');
     }
   } else {
-    throw new AppError(httpStatus.NOT_FOUND, 'No documents found');
+    throw new AppError(httpStatus.NOT_FOUND, 'No documents found!');
   }
 };

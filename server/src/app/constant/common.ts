@@ -83,7 +83,7 @@ export const createNameValidationSchema = z.object({
 
 export const updateNameValidationSchema = z.object({
   firstName: z.string().min(1).max(20).trim().optional(),
-  middleName: z.string().min(1).max(20).trim().optional(),
+  middleName: z.string().min(1).max(20).trim().nullable().optional(),
   lastName: z.string().min(1).max(20).trim().optional(),
 });
 

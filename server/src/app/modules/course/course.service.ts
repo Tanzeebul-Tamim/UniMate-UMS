@@ -59,10 +59,10 @@ const getAssignedFacultiesOfACourseFromDB = async (id: string) => {
     if (result.faculties.length > 0) {
       return result;
     } else {
-      throw new AppError(httpStatus.NOT_FOUND, 'No assigned faculties found');
+      throw new AppError(httpStatus.NOT_FOUND, 'No assigned faculties found!');
     }
   } else {
-    throw new AppError(httpStatus.NOT_FOUND, 'No documents found');
+    throw new AppError(httpStatus.NOT_FOUND, 'No documents found!');
   }
 };
 
@@ -261,7 +261,7 @@ const assignFacultiesIntoCourseIntoDB = async (
   const facultyInfoForAssigningIntoCourse = await Faculty.find();
 
   if (facultyInfoForAssigningIntoCourse.length === 0) {
-    throw new AppError(httpStatus.NOT_FOUND, 'No faculty documents found');
+    throw new AppError(httpStatus.NOT_FOUND, 'No faculty documents found!');
   }
 
   const existingFacultyIDs =
@@ -273,7 +273,7 @@ const assignFacultiesIntoCourseIntoDB = async (
     try {
       new mongoose.Types.ObjectId(elem);
     } catch (error) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Invalid ID format');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Invalid ID format!');
     }
 
     if (!existingFacultyIDs?.includes(elem.toString())) {
@@ -333,7 +333,7 @@ const removeFacultiesFromCourseFromDB = async (
     try {
       new mongoose.Types.ObjectId(elem);
     } catch (error) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Invalid ID format');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Invalid ID format!');
     }
 
     if (!existingFacultyIDs?.includes(elem.toString())) {

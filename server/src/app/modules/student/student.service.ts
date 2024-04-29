@@ -10,6 +10,13 @@ import {
 } from './student.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
+import { validateId } from '../../utils/idValidator';
+import { NextFunction } from 'express';
+import {
+  removeGuardianMiddleName,
+  removeLocalGuardianMiddleName,
+  removeMiddleName,
+} from '../../utils/middleNameRemover';
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(
@@ -38,6 +45,8 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getAStudentFromDB = async (id: string) => {
+  validateId(id, 'S', id[0]);
+
   const result = await Student.findOne({ id })
     .populate({
       path: 'academicDepartment',
@@ -54,14 +63,39 @@ const getAStudentFromDB = async (id: string) => {
   return result;
 };
 
-const updateAStudentFromDB = async (id: string, payload: TUpdateStudent) => {
+const updateAStudentFromDB = async (
+  id: string,
+  payload: TUpdateStudent,
+  next: NextFunction,
+) => {
+  validateId(id, 'S', id[0]);
   restrictFieldsValidator(payload, StudentUpdatableFields);
+
   const { name, guardian, localGuardian, ...remainingStudentData } = payload;
+
   const modifiedPayload: Record<string, unknown> = { ...remainingStudentData };
 
   if (name && Object.keys(name).length) {
-    for (const [key, value] of Object.entries(name)) {
-      modifiedPayload[`name.${key}`] = value;
+    if (name.middleName === null) {
+      try {
+        const modifiedName = await removeMiddleName(name, id, 'S');
+        modifiedPayload.name = modifiedName;
+      } catch (error) {
+        if (error instanceof AppError) {
+          next(error);
+        } else {
+          next(
+            new AppError(
+              httpStatus.INTERNAL_SERVER_ERROR,
+              'An unexpected error occurred!',
+            ),
+          );
+        }
+      }
+    } else {
+      for (const [key, value] of Object.entries(name)) {
+        modifiedPayload[`name.${key}`] = value;
+      }
     }
   }
 
@@ -79,9 +113,16 @@ const updateAStudentFromDB = async (id: string, payload: TUpdateStudent) => {
             Object.keys(parentValue).length
           ) {
             for (const [nameKey, nameValue] of Object.entries(parentValue)) {
-              modifiedPayload[
-                `guardian.${guardianKey}.${parentKey}.${nameKey}`
-              ] = nameValue;
+              if (nameKey === 'middleName' && nameValue === null) {
+                await removeGuardianMiddleName(
+                  id,
+                  guardianKey as 'father' | 'mother',
+                );
+              } else {
+                modifiedPayload[
+                  `guardian.${guardianKey}.${parentKey}.${nameKey}`
+                ] = nameValue;
+              }
             }
           } else if (parentValue && typeof parentValue === 'string') {
             modifiedPayload[`guardian.${guardianKey}.${parentKey}`] =
@@ -102,8 +143,12 @@ const updateAStudentFromDB = async (id: string, payload: TUpdateStudent) => {
         Object.keys(localGuardianValue).length
       ) {
         for (const [nameKey, nameValue] of Object.entries(localGuardianValue)) {
-          modifiedPayload[`localGuardian.${localGuardianKey}.${nameKey}`] =
-            nameValue;
+          if (nameKey === 'middleName' && nameValue === null) {
+            await removeLocalGuardianMiddleName(id);
+          } else {
+            modifiedPayload[`localGuardian.${localGuardianKey}.${nameKey}`] =
+              nameValue;
+          }
         }
       } else if (localGuardianValue && typeof localGuardianValue === 'string') {
         modifiedPayload[`localGuardian.${localGuardianKey}`] =
@@ -132,6 +177,8 @@ const updateAStudentFromDB = async (id: string, payload: TUpdateStudent) => {
 };
 
 const deleteAStudentFromDB = async (id: string) => {
+  validateId(id, 'S', id[0]);
+
   //* Start a session
   const session = await mongoose.startSession();
 

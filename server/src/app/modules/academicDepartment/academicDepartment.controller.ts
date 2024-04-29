@@ -2,6 +2,7 @@ import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import { AcademicDepartmentServices } from './academicDepartment.service';
+import AppError from '../../errors/AppError';
 
 const createAcademicDepartment = catchAsync(async (req, res) => {
   const result =
@@ -31,33 +32,44 @@ const getAllAcademicDepartments = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
       success: false,
-      message: 'No academic departments found',
-      data: result,
+      message: 'No academic departments found!',
+      data: null,
     });
   }
 });
 
-const getAnAcademicDepartment = catchAsync(async (req, res) => {
-  const { departmentId } = req.params;
-  const result =
-    await AcademicDepartmentServices.getAnAcademicDepartmentFromDB(
-      departmentId,
-    );
+const getAnAcademicDepartment = catchAsync(async (req, res, next) => {
+  try {
+    const { departmentId } = req.params;
+    const result =
+      await AcademicDepartmentServices.getAnAcademicDepartmentFromDB(
+        departmentId,
+      );
 
-  if (result) {
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Academic department has been retrieved successfully',
-      data: result,
-    });
-  } else {
-    sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: 'Academic department not found!',
-      data: result,
-    });
+    if (result) {
+      sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Academic department has been retrieved successfully',
+        data: result,
+      });
+    } else {
+      throw new AppError(
+        httpStatus.NOT_FOUND,
+        'Academic department not found!',
+      );
+    }
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else if (error instanceof Error) {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          error.message || 'An unexpected error occurred!',
+        ),
+      );
+    }
   }
 });
 

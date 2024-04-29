@@ -2,6 +2,7 @@ import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import { SemesterRegistrationServices } from './semesterRegistration.service';
+import AppError from '../../errors/AppError';
 
 const createSemesterRegistration = catchAsync(async (req, res) => {
   const result =
@@ -33,33 +34,44 @@ const getAllSemesterRegistrations = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
       success: false,
-      message: 'No academic semester registries found',
-      data: result,
+      message: 'No academic semester registries found!',
+      data: null,
     });
   }
 });
 
-const getASemesterRegistration = catchAsync(async (req, res) => {
-  const { semesterRegistrationId } = req.params;
-  const result =
-    await SemesterRegistrationServices.getASemesterRegistrationFromDB(
-      semesterRegistrationId,
-    );
+const getASemesterRegistration = catchAsync(async (req, res, next) => {
+  try {
+    const { semesterRegistrationId } = req.params;
+    const result =
+      await SemesterRegistrationServices.getASemesterRegistrationFromDB(
+        semesterRegistrationId,
+      );
 
-  if (result) {
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Academic semester registry has been retrieved successfully',
-      data: result,
-    });
-  } else {
-    sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
-      message: 'Academic semester registry not found!',
-      data: result,
-    });
+    if (result) {
+      sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Academic semester registry has been retrieved successfully',
+        data: result,
+      });
+    } else {
+      throw new AppError(
+        httpStatus.NOT_FOUND,
+        'Academic semester registry not found!',
+      );
+    }
+  } catch (error) {
+    if (error instanceof AppError) {
+      next(error);
+    } else if (error instanceof Error) {
+      next(
+        new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          error.message || 'An unexpected error occurred!',
+        ),
+      );
+    }
   }
 });
 

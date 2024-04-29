@@ -55,12 +55,12 @@ const createOfferedCourseIntoDB = async (
   if (getSemesterRegistrationInfo.status !== 'upcoming') {
     if (getSemesterRegistrationInfo.status === 'ended') {
       throw new AppError(
-        httpStatus.CONFLICT,
+        httpStatus.FORBIDDEN,
         'This semester has already been ended',
       );
     } else if (getSemesterRegistrationInfo.status === 'ongoing') {
       throw new AppError(
-        httpStatus.CONFLICT,
+        httpStatus.FORBIDDEN,
         'This semester is already ongoing',
       );
     }
@@ -81,33 +81,6 @@ const createOfferedCourseIntoDB = async (
 
   if (!getCourseInfo) {
     throw new AppError(httpStatus.NOT_FOUND, 'Course not found!');
-  }
-
-  //* Check if the faculty exists or not
-  const getFacultyInfo = await Faculty.findById(faculty);
-
-  if (!getFacultyInfo) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found!');
-  }
-
-  //* Check if the faculty is assigned to the particular provided course or not
-  const facultyName = !getFacultyInfo.name.middleName
-    ? `${getFacultyInfo.name.firstName} ${getFacultyInfo.name.lastName}`
-    : `${getFacultyInfo.name.firstName} ${getFacultyInfo.name.middleName} ${getFacultyInfo.name.lastName}`;
-  const getCourseFaculties = await CourseFaculty.findOne({ course });
-
-  if (!getCourseFaculties) {
-    throw new AppError(
-      httpStatus.NOT_FOUND,
-      'This course does not have any assigned faculties!',
-    );
-  }
-
-  if (faculty && !getCourseFaculties.faculties.includes(faculty)) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `Faculty ${facultyName} isn't assigned to course ${getCourseInfo.prefix}${getCourseInfo.code}`,
-    );
   }
 
   //* Validate section student capacity
@@ -152,18 +125,49 @@ const createOfferedCourseIntoDB = async (
     );
   }
 
+  //* Set start time and end time
+  payload.startTime = startTime;
+  payload.endTime = endTime;
+
   //* Ensure that same day hasn't been put twice
   const seen = new Set();
-  if (days) {
-    for (const day of days) {
-      if (seen.has(day)) {
-        throw new AppError(
-          httpStatus.UNPROCESSABLE_ENTITY,
-          'Duplicate days are not allowed',
-        );
-      }
-      seen.add(day);
+  for (const day of days) {
+    if (seen.has(day)) {
+      throw new AppError(
+        httpStatus.UNPROCESSABLE_ENTITY,
+        'Duplicate days are not allowed',
+      );
     }
+    seen.add(day);
+  }
+
+  //* Check if the faculty exists or not
+  const getFacultyInfo = await Faculty.findById(faculty);
+
+  if (!getFacultyInfo) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found!');
+  }
+
+  //* Construct faculty name
+  const facultyName = !getFacultyInfo.name.middleName
+    ? `${getFacultyInfo.name.firstName} ${getFacultyInfo.name.lastName}`
+    : `${getFacultyInfo.name.firstName} ${getFacultyInfo.name.middleName} ${getFacultyInfo.name.lastName}`;
+
+  //* Check if the faculty is assigned to the particular provided course or not
+  const getCourseFaculties = await CourseFaculty.findOne({ course });
+
+  if (!getCourseFaculties) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'This course does not have any assigned faculties!',
+    );
+  }
+
+  if (!getCourseFaculties.faculties.includes(faculty)) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      `Faculty ${facultyName} isn't assigned to course ${getCourseInfo.prefix}${getCourseInfo.code}`,
+    );
   }
 
   //* Ensure that the faculty don't have other section assigned on the time slot
@@ -188,10 +192,6 @@ const createOfferedCourseIntoDB = async (
       });
     });
   }
-
-  //* Set start time and end time
-  payload.startTime = startTime;
-  payload.endTime = endTime;
 
   //* Set the populated fields into the payload
   const academicSemester =
@@ -274,55 +274,173 @@ const getAnOfferedCourseFromDB = async (id: string) => {
   return result;
 };
 
-// const updateAnOfferedCourseIntoDB = async (
-//   id: string,
-//   payload: TUpdateOfferedCourse,
-// ) => {
-//   restrictFieldsValidator(payload, OfferedCourseUpdatableFields);
+const updateAnOfferedCourseIntoDB = async (
+  id: string,
+  payload: TUpdateOfferedCourse & {
+    timeSlot?: number;
+  },
+) => {
+  restrictFieldsValidator(payload, OfferedCourseUpdatableFields);
 
-//   const currentSemester = await OfferedCourse.findById(id);
-//   const currentSemesterStatus = currentSemester?.status;
+  const { faculty, maxCapacity, remainingCapacity, days, timeSlot } = payload;
 
-//   //* Ensure that the current status of the requested semester is not "ended"
-//   if (currentSemesterStatus === RegistrationStatuses.ENDED) {
-//     throw new AppError(
-//       httpStatus.BAD_REQUEST,
-//       `The semester cannot be updated because it has already been ${currentSemesterStatus}`,
-//     );
-//   }
+  //* Check if the offered course exists or not
+  const doesOfferedCourseExist = await OfferedCourse.findById(id);
 
-//   const currentSemesterRegistrationInfo = (await OfferedCourse.findById(
-//     id,
-//   )) as TSemesterRegistrationDB;
+  if (!doesOfferedCourseExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Offered course not found!');
+  }
 
-//   //* Check if the academic semester registry exists or not
-//   if (!currentSemesterRegistrationInfo) {
-//     throw new AppError(httpStatus.NOT_FOUND, 'Semester registry not found!');
-//   }
+  //* Check if the semester registration exists or not
+  const semesterRegistration = await SemesterRegistration.findById(
+    doesOfferedCourseExist.semesterRegistration,
+  );
 
-//   const validatePayload =
-//     validateAndModifyPayloadForUpdatingSemesterRegistration(
-//       payload,
-//       currentSemesterRegistrationInfo,
-//     );
+  if (!semesterRegistration) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Semester registration not found!',
+    );
+  }
 
-//   const result = await OfferedCourse.findByIdAndUpdate(id, validatePayload, {
-//     new: true,
-//     runValidators: true,
-//   })
-//     .populate('semesterRegistration')
-//     .populate('academicSemester')
-//     .populate('academicFaculty')
-//     .populate('academicDepartment')
-//     .populate('course')
-//     .populate('faculty');
+  //* Ensure that the semester registration status is not 'ended'
+  if (semesterRegistration?.status === 'ended') {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'The semester has already been ended',
+    );
+  }
 
-//   return result;
-// };
+  //* Ensure that the ongoing courses cannot update student capacity
+  if (
+    semesterRegistration?.status === 'ongoing' &&
+    (payload.maxCapacity || payload.remainingCapacity)
+  ) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'Cannot update student capacity because the course is ongoing',
+    );
+  }
+
+  //* Get Course info
+  const getCourseInfo = await Course.findById(doesOfferedCourseExist?.course);
+
+  if (!getCourseInfo) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Course not found!');
+  }
+
+  //* Validate section student capacity
+  if (maxCapacity && remainingCapacity) {
+    if (maxCapacity < remainingCapacity) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'Remaining capacity cannot be greater than max capacity',
+      );
+    }
+  } else if (
+    (!maxCapacity && remainingCapacity) ||
+    (maxCapacity && !remainingCapacity)
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Please enter both max capacity and remaining capacity',
+    );
+  }
+
+  if (timeSlot) {
+    //* Validate time slot
+    if (timeSlot < 1 || timeSlot > 7) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'Invalid time slot number. Valid time slot number range is from 1 to 7',
+      );
+    }
+
+    //* Get start and end time from time slot
+    const startEndTime = TimeSlots[timeSlot];
+    const startTime = startEndTime[0];
+    const endTime = startEndTime[1];
+
+    //* Ensure that the start time comes before the end time
+    const startTimeObj = new Date(`1970-01-01T${startTime}Z`);
+    const endTimeObj = new Date(`1970-01-01T${endTime}Z`);
+
+    if (startTimeObj.getTime() >= endTimeObj.getTime()) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'End time cannot come before start time',
+      );
+    }
+
+    //* Set start time and end time
+    payload.startTime = startTime;
+    payload.endTime = endTime;
+  }
+
+  if (days) {
+    //* Ensure that same day hasn't been put twice
+    const seen = new Set();
+    for (const day of days) {
+      if (seen.has(day)) {
+        throw new AppError(
+          httpStatus.UNPROCESSABLE_ENTITY,
+          'Duplicate days are not allowed',
+        );
+      }
+      seen.add(day);
+    }
+  }
+
+  if (faculty) {
+    //* Check if the faculty exists or not
+    const getFacultyInfo = await Faculty.findById(faculty);
+
+    if (!getFacultyInfo) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found!');
+    }
+
+    //* Construct faculty name
+    const facultyName = !getFacultyInfo.name.middleName
+      ? `${getFacultyInfo.name.firstName} ${getFacultyInfo.name.lastName}`
+      : `${getFacultyInfo.name.firstName} ${getFacultyInfo.name.middleName} ${getFacultyInfo.name.lastName}`;
+
+    //* Check if the faculty is assigned to the particular provided course or not
+    const getCourseFaculties = await CourseFaculty.findOne({
+      course: doesOfferedCourseExist?.course,
+    });
+
+    if (!getCourseFaculties) {
+      throw new AppError(
+        httpStatus.NOT_FOUND,
+        'This course does not have any assigned faculties!',
+      );
+    }
+
+    if (!getCourseFaculties.faculties.includes(faculty)) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        `Faculty ${facultyName} isn't assigned to course ${getCourseInfo?.prefix}${getCourseInfo?.code}`,
+      );
+    }
+  }
+
+  const result = await OfferedCourse.findByIdAndUpdate(id, validatePayload, {
+    new: true,
+    runValidators: true,
+  })
+    .populate('semesterRegistration')
+    .populate('academicSemester')
+    .populate('academicFaculty')
+    .populate('academicDepartment')
+    .populate('course')
+    .populate('faculty');
+
+  return result;
+};
 
 export const OfferedCourseServices = {
   createOfferedCourseIntoDB,
   getAllOfferedCoursesFromDB,
   getAnOfferedCourseFromDB,
-  // updateAnOfferedCourseIntoDB,
+  updateAnOfferedCourseIntoDB,
 };

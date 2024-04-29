@@ -16,6 +16,7 @@ const createIndividualGuardianValidationSchema = z.object({
   name: createNameValidationSchema,
   occupation: z.string().min(1).trim(),
   contactNo: z.string().min(1).trim(),
+  email: z.string().email(),
 });
 
 //* Define Zod schemas for TLocalGuardian types

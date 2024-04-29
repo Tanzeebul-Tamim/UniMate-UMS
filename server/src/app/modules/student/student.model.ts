@@ -22,6 +22,7 @@ const individualGuardianSchema = new Schema<TIndividualGuardian>({
   name: { type: nameSchema, required: [true, 'Name is required'] },
   occupation: { type: String, required: [true, 'Occupation is required'] },
   contactNo: { type: String, required: [true, 'Contact no is required'] },
+  email: { type: String, required: [true, 'Email is required'] },
 });
 
 const guardianSchema = new Schema<TGuardian>({
