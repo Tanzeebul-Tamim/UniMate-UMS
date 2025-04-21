@@ -92,7 +92,7 @@ A visual representation of the core database models and relationships:
 
 ### 📡 API Endpoints
 
-For a complete list of API specifications, including all endpoints and HTTP methods, refer to the [**API Endpoints and CRUD Operation Methods**](./analysis-requirements/UniMate-UMS-Requirement-Analysis.pdf) section in the full requirement analysis document.
+For a complete list of API specifications, including all endpoints and HTTP methods, refer to the ***API Endpoints and CRUD Operation Methods*** section in the [**Requirement-Analysis**](./analysis-requirements/UniMate-UMS-Requirement-Analysis.pdf) document.
 
 ---
 
@@ -137,12 +137,14 @@ For a complete list of API specifications, including all endpoints and HTTP meth
         - **APPLICATION ENVIRONMENT:**
 
             'development' for local testing, 'production' for deployed builds
+          
             **`NODE_ENV=development`**
             <br>
 
         - **SERVER PORT:**
 
             The port your Express app will listen on
+          
             **`PORT=5000`**
             <br>
 
