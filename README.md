@@ -92,7 +92,7 @@ A visual representation of the core database models and relationships:
 
 ### 📡 API Endpoints
 
-For a complete list of API specifications, including all endpoints and HTTP methods, refer to the [**API Endpoints and CRUD Operation Methods**](./analysis-requirements/UniMate-UMS-Requirement-Analysis.docx) section in the full requirement analysis document.
+For a complete list of API specifications, including all endpoints and HTTP methods, refer to the [**API Endpoints and CRUD Operation Methods**](./analysis-requirements/UniMate-UMS-Requirement-Analysis.pdf) section in the full requirement analysis document.
 
 ---
 
@@ -161,12 +161,14 @@ For a complete list of API specifications, including all endpoints and HTTP meth
         - **BCRYPT SALT ROUNDS:**
 
             Number of hashing rounds for passwords (integer ≥ 4)
+
             **`BCRYPT_SALT_ROUNDS=12`**
             <br>
 
         - **DEFAULT ADMIN PASSWORD:**
 
             Used only for initial setup—change immediately after first login
+
             **`DEFAULT_PASS=ChangeMeToASecurePassword!`**
             <br>
 
@@ -198,12 +200,6 @@ Sample endpoints:
 ## 📦 Sample Data
 
 Sample `.json` data files for Student, Faculty, Admin available in `/sample/` folder for testing payloads.
-
-## 🧑‍🔧 Author & Maintainer
-
-**Tanzeebul Tamim**
-
-Built as a major backend practice project with focus on writing enterprise-grade backend architecture with scalable and modular design.
 
 ## 📄 License
 
