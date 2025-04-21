@@ -137,25 +137,21 @@ For a complete list of API specifications, including all endpoints and HTTP meth
         - **APPLICATION ENVIRONMENT:**
 
             'development' for local testing, 'production' for deployed builds
-          
             **`NODE_ENV=development`**
             <br>
 
         - **SERVER PORT:**
 
             The port your Express app will listen on
-          
             **`PORT=5000`**
             <br>
 
         - **MONGODB CONNECTION STRING:**
 
             - **_For a local MongoDB server:_**
-
                 **`DATABASE_URL=mongodb://localhost:27017/unimate`**
 
             - **_For MongoDB Atlas:_**
-
                 Replace `<user>`, `<pass>`, `<cluster-url>`, `<dbname>` & `<cluster>` with actual values:
                 **`DATABASE_URL=mongodb+srv://<user>:<pass>@<cluster-url>/<dbname>?retryWrites=true&w=majority&appName=<cluster>`**
                 <br>
@@ -163,14 +159,12 @@ For a complete list of API specifications, including all endpoints and HTTP meth
         - **BCRYPT SALT ROUNDS:**
 
             Number of hashing rounds for passwords (integer ≥ 4)
-
             **`BCRYPT_SALT_ROUNDS=12`**
             <br>
 
         - **DEFAULT ADMIN PASSWORD:**
 
             Used only for initial setup—change immediately after first login
-
             **`DEFAULT_PASS=ChangeMeToASecurePassword!`**
             <br>
 
