@@ -6,15 +6,15 @@ UniMate is a robust and scalable university management backend system designed t
 
 ## Table of Contents
 - [Features](#-features)
-- [Live Deployment](#-live-deployment)
 - [Technologies Used](#-technologies-used)
 - [Project Structure](#-project-structure)
 - [Requirement Analysis](#-requirement-analysis)
 - [Database Schema Overview](#-database-schema-overview)
 - [API Endpoints](#-api-endpoints)
-- [Installation & Running Locally](#-installation-and-running-locally)
+- [Live Deployment](#-live-deployment)
 - [Sample API Testing](#-sample-api-testing)
 - [Sample Data](#-sample-data)
+- [Installation & Running Locally](#-installation-and-running-locally)
 - [License](#-license)
 
 ---
@@ -122,10 +122,6 @@ For a complete list of API specifications, including all endpoints and HTTP meth
 ## 🌐 Live Deployment
 
 The API is deployed at vercel and can be accessed through [**this following URL**](https://unimate-ums-backend.vercel.app/)
-
----
-
-Here's an updated version of your section with the note added:
 
 ---
 
