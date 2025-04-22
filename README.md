@@ -2,6 +2,19 @@
 
 UniMate is a robust and scalable university management backend system designed to manage academic and administrative functionalities for students, faculty, and admin users. It is built with TypeScript, Express.js, MongoDB, and other modern tools, featuring proper error handling, validation, and modular architecture.
 
+## Table of Contents
+- [Features](#-features)
+- [Live Deployment](#-live-deployment)
+- [Technologies Used](#-technologies-used)
+- [Project Structure](#-project-structure)
+- [Requirement Analysis](#-requirement-analysis)
+- [Database Schema Overview](#-database-schema-overview)
+- [API Endpoints](#-api-endpoints)
+- [Installation & Running Locally](#-installation-and-running-locally)
+- [Sample API Testing](#-sample-api-testing)
+- [Sample Data](#-sample-data)
+- [License](#-license)
+
 ## 🚀 Features
 
 -   Full CRUD operations for students, faculty, and admin profiles.
@@ -13,6 +26,10 @@ UniMate is a robust and scalable university management backend system designed t
 -   Custom logic like middle name removal and ID formatting checks.
 -   Role-based restrictions and utility logic for request validation.
 -   Well-structured modular folder architecture.
+
+## 🌐 Live Deployment
+
+The API is deployed at vercel and can be accessed through [**this following URL**](https://unimate-ums-backend.vercel.app/)
 
 ## 🧰 Technologies Used
 
@@ -96,7 +113,7 @@ For a complete list of API specifications, including all endpoints and HTTP meth
 
 ---
 
-## 🛠 Installation & Running Locally
+## 🛠 Installation and Running Locally
 
 ### Prerequisites
 

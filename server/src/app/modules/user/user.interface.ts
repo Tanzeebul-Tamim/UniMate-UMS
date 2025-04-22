@@ -10,4 +10,3 @@ export type TUser = {
   status: TStatus;
   isDeleted: boolean;
 };
-

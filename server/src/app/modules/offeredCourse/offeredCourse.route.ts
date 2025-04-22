@@ -7,24 +7,17 @@ const router = express.Router();
 
 router.post(
   '/create-offered-course',
-  validateRequest(
-    OfferedCourseValidations.createOfferedCourseValidationSchema,
-  ),
+  validateRequest(OfferedCourseValidations.createOfferedCourseValidationSchema),
   OfferedCourseControllers.createOfferedCourse,
 );
 
 router.get('/', OfferedCourseControllers.getAllOfferedCourses);
 
-router.get(
-  '/:offeredCourseId',
-  OfferedCourseControllers.getAnOfferedCourse,
-);
+router.get('/:offeredCourseId', OfferedCourseControllers.getAnOfferedCourse);
 
 router.patch(
   '/:offeredCourseId',
-  validateRequest(
-    OfferedCourseValidations.updateOfferedCourseValidationSchema,
-  ),
+  validateRequest(OfferedCourseValidations.updateOfferedCourseValidationSchema),
   OfferedCourseControllers.updateAnOfferedCourse,
 );
 
