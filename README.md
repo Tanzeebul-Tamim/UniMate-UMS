@@ -98,7 +98,7 @@ _Full API spec and data structure details provided below._
 
 ---
 
-### 🗂 Database Schema Overview
+## 🗂 Database Schema Overview
 
 A visual representation of the core database models and relationships:
 
@@ -113,7 +113,7 @@ A visual representation of the core database models and relationships:
 
 ---
 
-### 📡 API Endpoints
+## 📡 API Endpoints
 
 For a complete list of API specifications, including all endpoints and HTTP methods, refer to the ***API Endpoints and CRUD Operation Methods*** section in the [**Requirement-Analysis**](./analysis-requirements/UniMate-UMS-Requirement-Analysis.pdf) document.
 
@@ -148,7 +148,7 @@ Sample `.json` data files for Student, Faculty, Admin available in `/sample/` fo
 
 ---
 
-### ✅ Prerequisites
+## ✅ Prerequisites
 
 -   Node.js
 -   MongoDB instance (local or cloud)
