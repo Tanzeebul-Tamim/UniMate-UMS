@@ -11,10 +11,12 @@ UniMate is a robust and scalable university management backend system designed t
 - [Requirement Analysis](#-requirement-analysis)
 - [Database Schema Overview](#-database-schema-overview)
 - [API Endpoints](#-api-endpoints)
-- [Live Deployment](#-live-deployment)
 - [Sample API Testing](#-sample-api-testing)
+- [Common Advanced Query Features](#-common-advanced-query-features)
 - [Sample Data](#-sample-data)
-- [Installation & Running Locally](#-installation-and-running-locally)
+- [Prerequisites](#-prerequisites)
+- [Installation and Running Locally](#-installation-and-running-locally)
+- [Live Deployment](#-live-deployment)
 - [License](#-license)
 
 ---
@@ -119,32 +121,55 @@ For a complete list of API specifications, including all endpoints and HTTP meth
 
 ---
 
-## 🌐 Live Deployment
-
-The API is deployed at vercel and can be accessed through [**this following URL**](https://unimate-ums-backend.vercel.app/)
-
----
-
 ## 🧪 Sample API Testing
 
 Use tools like [**Postman**](https://www.postman.com/) or [**Insomnia**](https://insomnia.rest/) to test APIs.
 
-> ⚠️ **Note:** Don't forget to prefix all endpoints with `/api/v1/`. Refer to the [Requirement Analysis Document](./analysis-requirements/UniMate-UMS-Requirement-Analysis.pdf) for the full list of API routes.
+> ⚠️ **Note:**  
+> 1. Don't forget to prefix all endpoints with **`/api/v1/`**. Refer to the [Requirement Analysis Document](./analysis-requirements/UniMate-UMS-Requirement-Analysis.pdf) for the full list of API routes.  
+> 2. For all **user-related operations** (admin, faculty, student), the `id` in the API must be the **application-generated user ID**, **not** the MongoDB ObjectId.  
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- The user ID starts with a letter indicating user type (`S`, `A`, or `F` for student, admin, and faculty respectively), followed by a 10-digit number.  
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Example: `S-2021010001` → 2021 = admission year, `01`/`02`/`03` = semester (spring/summer/fall), and the last 4 digits = serial number.  
+> 3. For all **other entities** such as Academic Faculty, Academic Department, Management Department, Course, Academic Semester, Semester Registration, Offered Course, etc., use the **MongoDB ObjectId (`_id`)** in the API.
 
 **Sample endpoints:**
 
+- **Create a student:** ```users/create-student``` (POST)  
+- **Get all students:** ```students``` (GET)  
+- **Get a specific student:** ```student/:id``` (GET)  
+- **Update a specific student:** ```student/:id``` (PATCH)  
+- **Delete a specific student:** ```student/:id``` (DELETE)  
+<br>
+
+Example:
+
 ```
-POST   /api/v1/academic-faculties/create-academic-faculty
-GET    /api/v1/academic-faculties
-GET    /api/v1/academic-faculties/id
-PATCH  /api/v1/academic-faculties/id
+POST    /api/v1/users/create-student
+GET     /api/v1/students
+GET     /api/v1/students/S-2021010001
+PATCH   /api/v1/students/S-2021010001
+DELETE  /api/v1/students/S-2021010001
 ```
 
 ---
 
+## **🔍 Common Advanced Query Features**
+Most GET endpoints (especially those returning lists like students, faculties, departments, courses, etc.) support:
+- **`searchTerm=<keyword>`** — for partial name/code searches
+- **`limit=<number>`** — to limit results per page
+- **`page=<number>`** — to paginate results
+- **`sort=<field>`** — for sorting
+- **Field-based filters** - (e.g., **`gender=male&bloodGroup=B+`**)
+
+Example:
+```http
+GET   /api/v1/faculties?searchTerm=john&gender=male&page=2&limit=10&sortBy=name.firstName
+```
+---
+
 ## 📦 Sample Data
 
-Sample `.json` data files for Student, Faculty, Admin available in `/sample/` folder for testing payloads.
+Sample `.json` data files for Student, Faculty, Admin available in [**`sample`**](./server/sample) folder for testing payloads.
 
 ---
 
@@ -156,7 +181,7 @@ Sample `.json` data files for Student, Faculty, Admin available in `/sample/` fo
 
 ---
 
-## 🛠️ Installation and Running Locally
+## 🔧 Installation and Running Locally
 
 
 ### Steps
@@ -234,6 +259,12 @@ Sample `.json` data files for Student, Faculty, Admin available in `/sample/` fo
     npm run build
     npm run prod
     ```
+
+---
+
+## 🌐 Live Deployment
+
+The API is deployed at vercel and can be accessed through [**this following URL**](https://unimate-ums-backend.vercel.app/)
 
 ---
 
