@@ -2,6 +2,8 @@
 
 UniMate is a robust and scalable university management backend system designed to manage academic and administrative functionalities for students, faculty, and admin users. It is built with TypeScript, Express.js, MongoDB, and other modern tools, featuring proper error handling, validation, and modular architecture.
 
+---
+
 ## Table of Contents
 - [Features](#-features)
 - [Live Deployment](#-live-deployment)
@@ -15,6 +17,8 @@ UniMate is a robust and scalable university management backend system designed t
 - [Sample Data](#-sample-data)
 - [License](#-license)
 
+---
+
 ## 🚀 Features
 
 -   Full CRUD operations for students, faculty, and admin profiles.
@@ -27,9 +31,7 @@ UniMate is a robust and scalable university management backend system designed t
 -   Role-based restrictions and utility logic for request validation.
 -   Well-structured modular folder architecture.
 
-## 🌐 Live Deployment
-
-The API is deployed at vercel and can be accessed through [**this following URL**](https://unimate-ums-backend.vercel.app/)
+---
 
 ## 🧰 Technologies Used
 
@@ -41,6 +43,8 @@ The API is deployed at vercel and can be accessed through [**this following URL*
 -   **dotenv** – Environment variable management
 -   **HTTP Status** – Clean status messaging
 -   **ts-node-dev** – TypeScript development server
+
+---
 
 ## 📁 Project Structure
 
@@ -76,6 +80,8 @@ UniMate-UMS/
     └── package-lock.json            # Automatically generated lockfile for reproducible installs
 
 ```
+
+---
 
 ## 📋 Requirement Analysis
 
@@ -113,13 +119,49 @@ For a complete list of API specifications, including all endpoints and HTTP meth
 
 ---
 
-## 🛠 Installation and Running Locally
+## 🌐 Live Deployment
 
-### Prerequisites
+The API is deployed at vercel and can be accessed through [**this following URL**](https://unimate-ums-backend.vercel.app/)
+
+---
+
+Here's an updated version of your section with the note added:
+
+---
+
+## 🧪 Sample API Testing
+
+Use tools like [**Postman**](https://www.postman.com/) or [**Insomnia**](https://insomnia.rest/) to test APIs.
+
+> ⚠️ **Note:** Don't forget to prefix all endpoints with `/api/v1/`. Refer to the [Requirement Analysis Document](./analysis-requirements/UniMate-UMS-Requirement-Analysis.pdf) for the full list of API routes.
+
+**Sample endpoints:**
+
+```
+POST   /api/v1/academic-faculties/create-academic-faculty
+GET    /api/v1/academic-faculties
+GET    /api/v1/academic-faculties/id
+PATCH  /api/v1/academic-faculties/id
+```
+
+---
+
+## 📦 Sample Data
+
+Sample `.json` data files for Student, Faculty, Admin available in `/sample/` folder for testing payloads.
+
+---
+
+### ✅ Prerequisites
 
 -   Node.js
 -   MongoDB instance (local or cloud)
 -   `.env` file with `PORT` and `DATABASE_URL`
+
+---
+
+## 🛠️ Installation and Running Locally
+
 
 ### Steps
 
@@ -197,22 +239,7 @@ For a complete list of API specifications, including all endpoints and HTTP meth
     npm run prod
     ```
 
-## 🧪 Sample API Testing
-
-Use tools like [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/) to test APIs.
-
-Sample endpoints:
-
-```
-- POST: /api/v1/academic-faculties/create-academic-faculty
-- GET:  /api/v1/academic-faculties
-- GET:  /api/v1/academic-faculties/:id
-- PATCH: /api/v1/academic-faculties/:id
-```
-
-## 📦 Sample Data
-
-Sample `.json` data files for Student, Faculty, Admin available in `/sample/` folder for testing payloads.
+---
 
 ## 📄 License
 
