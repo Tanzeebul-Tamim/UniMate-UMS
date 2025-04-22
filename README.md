@@ -163,7 +163,7 @@ Most GET endpoints (especially those returning lists like students, faculties, d
 
 Example:
 ```http
-GET   /api/v1/faculties?searchTerm=john&gender=male&page=2&limit=10&sortBy=name.firstName
+GET   /api/v1/faculties?searchTerm=john&gender=male&page=2&limit=10&sort=name.firstName
 ```
 ---
 
