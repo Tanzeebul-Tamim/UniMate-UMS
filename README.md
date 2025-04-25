@@ -108,10 +108,13 @@ A visual representation of the core database models and relationships:
 
 > **_Legend:_**
 >
-> -   **Pink**: primary collections/models
-> -   **Green**: role‑based sub‑collections (Student, Faculty, Admin)
-> -   **Yellow**: embedded/value objects (Name, Guardian)
-> -   **Cyan**: payloads from client (denormalized views)
+> -   **GREEN**: Primary entities (Student, Faculty, Admin)
+> -   **PINK**: User & academic structure entities (e.g., Academic Semester, Academic Department etc.)
+> -   **YELLOW**: Embedded objects (e.g., Name, Guardian etc.)
+> -   **CYAN**: Payloads from client (Offered Course, Semester Registration)
+
+> ⚠️ **Note:**  
+> Entities shown under ***Cyan*** have the same names as their database counterparts but differ slightly in structure because they represent client payloads, not direct database models.
 
 ---
 
@@ -163,7 +166,7 @@ Most GET endpoints (especially those returning lists like students, faculties, d
 
 Example:
 ```http
-GET   /api/v1/faculties?searchTerm=john&gender=male&page=2&limit=10&sortBy=name.firstName
+GET   /api/v1/faculties?searchTerm=john&gender=male&page=2&limit=10&sort=name.firstName
 ```
 ---
 
