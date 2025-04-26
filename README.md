@@ -55,31 +55,43 @@ UniMate-UMS/
 ├── .gitignore
 ├── README.md
 ├── analysis-requirements/
-│   ├── UniMate-Course-Syllabus.docx
-│   ├── UniMate-UMS-Database-Schema.png
-│   └── UniMate-UMS-Requirement-Analysis.docx
+│   ├── UniMate-Course-Syllabus.pdf                 # Project syllabus document
+│   ├── UniMate-UMS-Database-Schema.png             # Visual ER diagram showing database collections and relationships
+│   └── UniMate-UMS-Requirement-Analysis.pdf        # Documents functional requirements, database models, and API endpoints
 └── server/
-    ├── data/                        # JSON data dumps for seeding/testing
-    ├── sample/                      # sample request payloads (student.json, faculty.json, admin.json)
+    ├── data/                                       # JSON data dumps for seeding/testing
+    ├── sample/                                     # sample request payloads (student.json, faculty.json, admin.json)
     ├── src/
     │   ├── app/
-    │   │   ├── builder/             # QueryBuilder.ts – builds mongoose queries (filter, sort, paginate)
-    │   │   ├── config/              # index.ts – loads environment config
-    │   │   ├── constant/            # common.ts – shared enums and schemas
-    │   │   ├── errors/              # AppError & handlers for Zod, Mongoose, etc.
-    │   │   ├── interface/           # common.ts, error.ts – TypeScript types/interfaces
-    │   │   ├── middlewares/         # globalErrorHandler.ts, validateRequest.ts, notFound.ts
-    │   │   ├── modules/             # feature modules (academicFaculty, student, semesterRegistration, etc.)
-    │   │   ├── routes/              # index.ts – central router
-    │   │   └── utils/               # catchAsync.ts, sendResponse.ts, idValidator.ts, etc.
-    │   ├── app.ts                   # Express app setup (parsers, routes, error middleware)
-    │   └── server.ts                # Server entry point & MongoDB connection logic
-    ├── .env                         # Environment variables template (see README → [3. Set up environment variables])
-    ├── .eslintrc.json               # ESLint configuration for code linting and style enforcement
-    ├── .prettierrc.json             # Prettier configuration for consistent code formatting
-    ├── tsconfig.json                # TypeScript compiler options and project settings
-    ├── package.json                 # npm dependencies, devDependencies & useful scripts
-    └── package-lock.json            # Automatically generated lockfile for reproducible installs
+    │   │   ├── builder/                            # QueryBuilder.ts – builds mongoose queries (filter, sort, paginate)
+    │   │   ├── config/                             # index.ts – loads environment config
+    │   │   ├── constant/                           # common.ts – shared enums and schemas
+    │   │   ├── errors/                             # AppError & handlers for Zod, Mongoose, etc.
+    │   │   ├── interface/                          # common.ts, error.ts – TypeScript types/interfaces
+    │   │   ├── middlewares/                        # globalErrorHandler.ts, validateRequest.ts, notFound.ts
+    │   │   ├── modules/                            # feature modules (academicFaculty, student, semesterRegistration, etc.)
+    │   │   │   ├── moduleName/
+    │   │   │   │   ├── moduleName.constant.ts      # Module-specific constants (roles, statuses, default values)
+    │   │   │   │   ├── moduleName.controller.ts    # Handles HTTP request/response logic
+    │   │   │   │   ├── moduleName.interface.ts     # Module-specific TypeScript types and interfaces
+    │   │   │   │   ├── moduleName.model.ts         # Mongoose schema/model definition for the module
+    │   │   │   │   ├── moduleName.route.ts         # Express route definitions and API endpoints
+    │   │   │   │   ├── moduleName.service.ts       # Core business logic, DB interactions
+    │   │   │   │   ├── moduleName.utils.ts         # Utility/helper functions for the module (Optional)
+    │   │   │   │   └── moduleName.validation.ts    # Zod schema for validating incoming request bodies
+    │   │   │   │
+    │   │   │   └── ...                             # Other similar module directories
+    │   │   │
+    │   │   ├── routes/                             # index.ts – central router
+    │   │   └── utils/                              # Utilities - catchAsync.ts, sendResponse.ts, idValidator.ts, etc.
+    │   ├── app.ts                                  # Express app setup (parsers, routes, error middleware)
+    │   └── server.ts                               # Server entry point & MongoDB connection logic
+    ├── .env                                        # Environment variables template (see README → [3. Set up environment variables])
+    ├── .eslintrc.json                              # ESLint configuration for code linting and style enforcement
+    ├── .prettierrc.json                            # Prettier configuration for consistent code formatting
+    ├── tsconfig.json                               # TypeScript compiler options and project settings
+    ├── package.json                                # npm dependencies, devDependencies & useful scripts
+    └── package-lock.json                           # Automatically generated lockfile for reproducible installs
 
 ```
 
