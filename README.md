@@ -205,7 +205,7 @@ Sample `.json` data files for Student, Faculty, Admin available in [**`sample`**
 
     ```bash
     git clone https://github.com/yourusername/UniMate-UMS.git
-    cd UniMate-UMS
+    cd UniMate-UMS/server
     ```
 
 2. **Install dependencies:**
