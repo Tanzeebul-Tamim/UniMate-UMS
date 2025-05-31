@@ -1,6 +1,6 @@
-import { Day } from './offeredCourse.interface';
+import { TDay } from './offeredCourse.interface';
 
-export const Days: Day[] = [
+export const Days: TDay[] = [
   'Saturday',
   'Sunday',
   'Monday',

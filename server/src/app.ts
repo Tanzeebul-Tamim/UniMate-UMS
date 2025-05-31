@@ -1,9 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import cors from 'cors';
-import express, { Application, NextFunction, Request, Response } from 'express';
+import express, { Application, Request, Response } from 'express';
 import config from './app/config';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import notFound from './app/middlewares/notFound';
@@ -18,8 +14,10 @@ app.use(cors());
 //* application routes
 app.use('/api/v1', router);
 
-const test = async (req: Request, res: Response) => {
-  res.send(`😈 UniMate University server is listening on port ${config.port} 😈`);
+const test = async (_req: Request, res: Response) => {
+  res.send(
+    `😈 UniMate University server is listening on port ${config.port} 😈`,
+  );
 };
 
 app.get('/', test);

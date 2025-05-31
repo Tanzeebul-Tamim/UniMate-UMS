@@ -14,11 +14,17 @@ import {
 } from './offeredCourse.constant';
 import { SemesterRegistration } from '../semesterRegistration/semesterRegistration.model';
 import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
-import { Course, CourseFaculty } from '../course/course.model';
+import { Course } from '../course/course.model';
 import { Faculty } from '../faculty/faculty.model';
 import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
 import { Types } from 'mongoose';
 import { TAcademicFaculty } from '../academicFaculty/academicFaculty.interface';
+import {
+  validateCapacity,
+  validateCourseFaculty,
+  validateDays,
+  validateTimeSlot,
+} from './offeredCourse.utils';
 
 const createOfferedCourseIntoDB = async (
   payload: TOfferedCourse & {
@@ -52,18 +58,16 @@ const createOfferedCourseIntoDB = async (
   }
 
   //* Ensure that the semester registration status is 'upcoming'
-  if (getSemesterRegistrationInfo.status !== 'upcoming') {
-    if (getSemesterRegistrationInfo.status === 'ended') {
-      throw new AppError(
-        httpStatus.FORBIDDEN,
-        'This semester has already been ended',
-      );
-    } else if (getSemesterRegistrationInfo.status === 'ongoing') {
-      throw new AppError(
-        httpStatus.FORBIDDEN,
-        'This semester is already ongoing',
-      );
-    }
+  if (getSemesterRegistrationInfo.status === 'ended') {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'This semester has already been ended',
+    );
+  } else if (getSemesterRegistrationInfo.status === 'ongoing') {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'This semester is already ongoing',
+    );
   }
 
   //* Check if the academic department exists or not
@@ -84,62 +88,17 @@ const createOfferedCourseIntoDB = async (
   }
 
   //* Validate section student capacity
-  if (maxCapacity && remainingCapacity) {
-    if (maxCapacity < remainingCapacity) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Remaining capacity cannot be greater than max capacity',
-      );
-    }
-  } else if (
-    (!maxCapacity && remainingCapacity) ||
-    (maxCapacity && !remainingCapacity)
-  ) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'Please enter both max capacity and remaining capacity',
-    );
-  }
+  validateCapacity(maxCapacity, remainingCapacity);
+
+  //* Ensure that same day hasn't been put twice
+  validateDays(days);
 
   //* Validate time slot
-  if (timeSlot < 1 || timeSlot > 7) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'Invalid time slot number. Valid time slot number range is from 1 to 7',
-    );
-  }
-
-  //* Get start and end time from time slot
-  const startEndTime = TimeSlots[timeSlot];
-  const startTime = startEndTime[0];
-  const endTime = startEndTime[1];
-
-  //* Ensure that the start time comes before the end time
-  const startTimeObj = new Date(`1970-01-01T${startTime}Z`);
-  const endTimeObj = new Date(`1970-01-01T${endTime}Z`);
-
-  if (startTimeObj.getTime() >= endTimeObj.getTime()) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'End time cannot come before start time',
-    );
-  }
+  const { startTime, endTime } = validateTimeSlot(timeSlot);
 
   //* Set start time and end time
   payload.startTime = startTime;
   payload.endTime = endTime;
-
-  //* Ensure that same day hasn't been put twice
-  const seen = new Set();
-  for (const day of days) {
-    if (seen.has(day)) {
-      throw new AppError(
-        httpStatus.UNPROCESSABLE_ENTITY,
-        'Duplicate days are not allowed',
-      );
-    }
-    seen.add(day);
-  }
 
   //* Check if the faculty exists or not
   const getFacultyInfo = await Faculty.findById(faculty);
@@ -148,27 +107,8 @@ const createOfferedCourseIntoDB = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found!');
   }
 
-  //* Construct faculty name
-  const facultyName = !getFacultyInfo.name.middleName
-    ? `${getFacultyInfo.name.firstName} ${getFacultyInfo.name.lastName}`
-    : `${getFacultyInfo.name.firstName} ${getFacultyInfo.name.middleName} ${getFacultyInfo.name.lastName}`;
-
   //* Check if the faculty is assigned to the particular provided course or not
-  const getCourseFaculties = await CourseFaculty.findOne({ course });
-
-  if (!getCourseFaculties) {
-    throw new AppError(
-      httpStatus.NOT_FOUND,
-      'This course does not have any assigned faculties!',
-    );
-  }
-
-  if (!getCourseFaculties.faculties.includes(faculty)) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      `Faculty ${facultyName} isn't assigned to course ${getCourseInfo.prefix}${getCourseInfo.code}`,
-    );
-  }
+  await validateCourseFaculty(getFacultyInfo, getCourseInfo, faculty, course);
 
   //* Ensure that the faculty don't have other section assigned on the time slot
   const getConflictCourses = await OfferedCourse.find({
@@ -282,7 +222,13 @@ const updateAnOfferedCourseIntoDB = async (
 ) => {
   restrictFieldsValidator(payload, OfferedCourseUpdatableFields);
 
-  const { faculty, maxCapacity, remainingCapacity, days, timeSlot } = payload;
+  const {
+    faculty,
+    maxCapacity,
+    remainingCapacity,
+    days: payloadDays,
+    timeSlot,
+  } = payload;
 
   //* Check if the offered course exists or not
   const doesOfferedCourseExist = await OfferedCourse.findById(id);
@@ -330,65 +276,20 @@ const updateAnOfferedCourseIntoDB = async (
   }
 
   //* Validate section student capacity
-  if (maxCapacity && remainingCapacity) {
-    if (maxCapacity < remainingCapacity) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Remaining capacity cannot be greater than max capacity',
-      );
-    }
-  } else if (
-    (!maxCapacity && remainingCapacity) ||
-    (maxCapacity && !remainingCapacity)
-  ) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'Please enter both max capacity and remaining capacity',
-    );
+  validateCapacity(maxCapacity, remainingCapacity);
+
+  if (payloadDays) {
+    //* Validate scheduled days
+    validateDays(payloadDays);
   }
 
   if (timeSlot) {
     //* Validate time slot
-    if (timeSlot < 1 || timeSlot > 7) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Invalid time slot number. Valid time slot number range is from 1 to 7',
-      );
-    }
-
-    //* Get start and end time from time slot
-    const startEndTime = TimeSlots[timeSlot];
-    const startTime = startEndTime[0];
-    const endTime = startEndTime[1];
-
-    //* Ensure that the start time comes before the end time
-    const startTimeObj = new Date(`1970-01-01T${startTime}Z`);
-    const endTimeObj = new Date(`1970-01-01T${endTime}Z`);
-
-    if (startTimeObj.getTime() >= endTimeObj.getTime()) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'End time cannot come before start time',
-      );
-    }
+    const { startTime, endTime } = validateTimeSlot(timeSlot);
 
     //* Set start time and end time
     payload.startTime = startTime;
     payload.endTime = endTime;
-  }
-
-  if (days) {
-    //* Ensure that same day hasn't been put twice
-    const seen = new Set();
-    for (const day of days) {
-      if (seen.has(day)) {
-        throw new AppError(
-          httpStatus.UNPROCESSABLE_ENTITY,
-          'Duplicate days are not allowed',
-        );
-      }
-      seen.add(day);
-    }
   }
 
   if (faculty) {
@@ -399,32 +300,209 @@ const updateAnOfferedCourseIntoDB = async (
       throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found!');
     }
 
-    //* Construct faculty name
-    const facultyName = !getFacultyInfo.name.middleName
-      ? `${getFacultyInfo.name.firstName} ${getFacultyInfo.name.lastName}`
-      : `${getFacultyInfo.name.firstName} ${getFacultyInfo.name.middleName} ${getFacultyInfo.name.lastName}`;
-
     //* Check if the faculty is assigned to the particular provided course or not
-    const getCourseFaculties = await CourseFaculty.findOne({
-      course: doesOfferedCourseExist?.course,
-    });
+    validateCourseFaculty(
+      getFacultyInfo,
+      getCourseInfo,
+      faculty,
+      doesOfferedCourseExist.course,
+    );
 
-    if (!getCourseFaculties) {
-      throw new AppError(
-        httpStatus.NOT_FOUND,
-        'This course does not have any assigned faculties!',
-      );
+    //* Get all the assigned sections of the faculty
+    const getFacultyAssignedCourses = await OfferedCourse.find({ faculty });
+
+    //! Make sure that the faculty don't have any other classes on that particular time slot
+    for (const facultyAssignedCourse of getFacultyAssignedCourses) {
+      //* 'facultyAssignedCourse' is a particular assigned section/course
+      if (facultyAssignedCourse) {
+        //* Get the time slot and scheduled days for the particular assigned section of the faculty
+        const assignedCourseTimeSlot = [];
+        assignedCourseTimeSlot[0] = facultyAssignedCourse.startTime;
+        assignedCourseTimeSlot[1] = facultyAssignedCourse.endTime;
+        const assignedCourseDays = facultyAssignedCourse.days;
+
+        //* Get the time slot and scheduled days for the current section that is going to be updated
+        const currentCourseTimeSlot = [];
+        currentCourseTimeSlot[0] = doesOfferedCourseExist.startTime;
+        currentCourseTimeSlot[1] = doesOfferedCourseExist.endTime;
+        const currentCourseDays = doesOfferedCourseExist.days;
+
+        //* Get the time slot from the client which will be used for update
+        const payloadTimeSlot = timeSlot && TimeSlots[timeSlot];
+
+        //* Tracks whether the assigned course conflicts with any scheduled day on the rescheduled day provided by the client in the payload for updating the schedule. If there's a conflict, store the name of the conflicting day. Works when "days" are provided for updating.
+        let foundPayloadDayMatch = null;
+
+        //* Tracks whether the assigned course conflicts with any currently scheduled day of the offered course. If there's a conflict, store the name of the conflicting day. Works when "days" are not provided for updating.
+        let foundDayMatch = null;
+
+        if (payloadDays) {
+          //* Look for conflict days
+          for (let i = 0; i < payloadDays.length; i++) {
+            const payloadCourseDay = payloadDays[i];
+            if (assignedCourseDays.includes(payloadCourseDay)) {
+              foundPayloadDayMatch = payloadCourseDay;
+              break;
+            }
+          }
+
+          if (foundPayloadDayMatch) {
+            if (timeSlot) {
+              if (payloadTimeSlot === assignedCourseTimeSlot) {
+                throw new AppError(
+                  httpStatus.CONFLICT,
+                  `The assigned faculty already has a class scheduled during the specified time slot for another section on ${foundPayloadDayMatch}. Change the time slot, the scheduled day which is causing the conflict or the faculty to proceed.`,
+                );
+              }
+            } else {
+              if (currentCourseTimeSlot === assignedCourseTimeSlot) {
+                throw new AppError(
+                  httpStatus.CONFLICT,
+                  `The assigned faculty already has a class scheduled during the specified time slot for another section on ${foundPayloadDayMatch}. Change the time slot, the scheduled day which is causing the conflict or the faculty to proceed.`,
+                );
+              }
+            }
+          }
+        } else {
+          //* Look for conflict days
+          for (let i = 0; i < currentCourseDays.length; i++) {
+            const currentCourseDay = currentCourseDays[i];
+            if (assignedCourseDays.includes(currentCourseDay)) {
+              foundDayMatch = currentCourseDay;
+              break;
+            }
+          }
+
+          if (foundDayMatch) {
+            if (timeSlot) {
+              if (payloadTimeSlot === assignedCourseTimeSlot) {
+                throw new AppError(
+                  httpStatus.CONFLICT,
+                  `The assigned faculty already has a class scheduled during the specified time slot for another section on ${foundDayMatch}. Change the time slot, the scheduled day which is causing the conflict or the faculty to proceed.`,
+                );
+              }
+            } else {
+              if (currentCourseTimeSlot === assignedCourseTimeSlot) {
+                throw new AppError(
+                  httpStatus.CONFLICT,
+                  `The assigned faculty already has a class scheduled during the specified time slot for another section on ${foundDayMatch}. Change the time slot, the scheduled day which is causing the conflict or the faculty to proceed.`,
+                );
+              }
+            }
+          }
+        }
+      } else {
+        throw new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        );
+      }
+    }
+  } else {
+    const assignedFaculty = doesOfferedCourseExist.faculty;
+
+    //* Get the assigned faculty for this offered course
+    const getFacultyInfo = await Faculty.findById(assignedFaculty);
+
+    if (!getFacultyInfo) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found!');
     }
 
-    if (!getCourseFaculties.faculties.includes(faculty)) {
-      throw new AppError(
-        httpStatus.CONFLICT,
-        `Faculty ${facultyName} isn't assigned to course ${getCourseInfo?.prefix}${getCourseInfo?.code}`,
-      );
+    //* Get all the assigned sections of the assigned faculty
+    const getFacultyAssignedCourses = await OfferedCourse.find({
+      assignedFaculty,
+    });
+
+    //! Make sure that the faculty don't have any other classes on that particular time slot
+    for (const facultyAssignedCourse of getFacultyAssignedCourses) {
+      //* 'facultyAssignedCourse' is a particular assigned section/course
+      if (facultyAssignedCourse) {
+        //* Get the time slot and scheduled days for the particular assigned section of the faculty
+        const assignedCourseTimeSlot = [];
+        assignedCourseTimeSlot[0] = facultyAssignedCourse.startTime;
+        assignedCourseTimeSlot[1] = facultyAssignedCourse.endTime;
+        const assignedCourseDays = facultyAssignedCourse.days;
+
+        //* Get the time slot and scheduled days for the current section that is going to be updated
+        const currentCourseTimeSlot = [];
+        currentCourseTimeSlot[0] = doesOfferedCourseExist.startTime;
+        currentCourseTimeSlot[1] = doesOfferedCourseExist.endTime;
+        const currentCourseDays = doesOfferedCourseExist.days;
+
+        //* Get the time slot from the client which will be used for update
+        const payloadTimeSlot = timeSlot && TimeSlots[timeSlot];
+
+        //* Tracks whether the assigned course conflicts with any scheduled day on the rescheduled day provided by the client in the payload for updating the schedule. If there's a conflict, store the name of the conflicting day. Works when "days" are provided for updating.
+        let foundPayloadDayMatch = null;
+
+        //* Tracks whether the assigned course conflicts with any currently scheduled day of the offered course. If there's a conflict, store the name of the conflicting day. Works when "days" are not provided for updating.
+        let foundDayMatch = null;
+
+        if (payloadDays) {
+          //* Look for conflict days
+          for (let i = 0; i < payloadDays.length; i++) {
+            const payloadCourseDay = payloadDays[i];
+            if (assignedCourseDays.includes(payloadCourseDay)) {
+              foundPayloadDayMatch = payloadCourseDay;
+              break;
+            }
+          }
+
+          if (foundPayloadDayMatch) {
+            if (timeSlot) {
+              if (payloadTimeSlot === assignedCourseTimeSlot) {
+                throw new AppError(
+                  httpStatus.CONFLICT,
+                  `The assigned faculty already has a class scheduled during the specified time slot for another section on ${foundPayloadDayMatch}. Change the time slot, the scheduled day which is causing the conflict or the faculty to proceed.`,
+                );
+              }
+            } else {
+              if (currentCourseTimeSlot === assignedCourseTimeSlot) {
+                throw new AppError(
+                  httpStatus.CONFLICT,
+                  `The assigned faculty already has a class scheduled during the specified time slot for another section on ${foundPayloadDayMatch}. Change the time slot, the scheduled day which is causing the conflict or the faculty to proceed.`,
+                );
+              }
+            }
+          }
+        } else {
+          //* Look for conflict days
+          for (let i = 0; i < currentCourseDays.length; i++) {
+            const currentCourseDay = currentCourseDays[i];
+            if (assignedCourseDays.includes(currentCourseDay)) {
+              foundDayMatch = currentCourseDay;
+              break;
+            }
+          }
+
+          if (foundDayMatch) {
+            if (timeSlot) {
+              if (payloadTimeSlot === assignedCourseTimeSlot) {
+                throw new AppError(
+                  httpStatus.CONFLICT,
+                  `The assigned faculty already has a class scheduled during the specified time slot for another section on ${foundDayMatch}. Change the time slot, the scheduled day which is causing the conflict or the faculty to proceed.`,
+                );
+              }
+            } else {
+              if (currentCourseTimeSlot === assignedCourseTimeSlot) {
+                throw new AppError(
+                  httpStatus.CONFLICT,
+                  `The assigned faculty already has a class scheduled during the specified time slot for another section on ${foundDayMatch}. Change the time slot, the scheduled day which is causing the conflict or the faculty to proceed.`,
+                );
+              }
+            }
+          }
+        }
+      } else {
+        throw new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'An unexpected error occurred!',
+        );
+      }
     }
   }
 
-  const result = await OfferedCourse.findByIdAndUpdate(id, validatePayload, {
+  const result = await OfferedCourse.findByIdAndUpdate(id, payload, {
     new: true,
     runValidators: true,
   })

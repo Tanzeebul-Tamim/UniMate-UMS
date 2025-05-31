@@ -1,5 +1,7 @@
 **/node_modules/
+/.vscode
 server/dist
 server/.env
+server/.vercel
 server/data
 .git

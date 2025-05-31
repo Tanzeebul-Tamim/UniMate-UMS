@@ -9,7 +9,10 @@ router.get('/', FacultyControllers.getAllFaculties);
 
 router.get('/:facultyId', FacultyControllers.getAFaculty);
 
-router.get('/courses/:facultyId', FacultyControllers.getAssignedCoursesOfAFaculty);
+router.get(
+  '/courses/:facultyId',
+  FacultyControllers.getAssignedCoursesOfAFaculty,
+);
 
 router.patch(
   '/:facultyId',

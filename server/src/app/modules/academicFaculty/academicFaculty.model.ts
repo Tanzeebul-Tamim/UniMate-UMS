@@ -30,6 +30,8 @@ academicFacultySchema.pre('save', async function (next) {
   } catch (error) {
     if (error instanceof AppError) {
       next(error);
+    } else if (error instanceof Error) {
+      next(new AppError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     } else {
       next(
         new AppError(
@@ -53,6 +55,8 @@ academicFacultySchema.pre('findOneAndUpdate', async function (next) {
   } catch (error) {
     if (error instanceof AppError) {
       next(error);
+    } else if (error instanceof Error) {
+      next(new AppError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     } else {
       next(
         new AppError(

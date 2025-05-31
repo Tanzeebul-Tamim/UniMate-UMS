@@ -137,6 +137,8 @@ facultySchema.pre('save', async function (next) {
   } catch (error) {
     if (error instanceof AppError) {
       next(error);
+    } else if (error instanceof Error) {
+      next(new AppError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     } else {
       next(
         new AppError(
@@ -155,6 +157,8 @@ facultySchema.pre('find', function (next) {
   } catch (error) {
     if (error instanceof AppError) {
       next(error);
+    } else if (error instanceof Error) {
+      next(new AppError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     } else {
       next(
         new AppError(
@@ -173,6 +177,8 @@ facultySchema.pre('findOne', async function (next) {
   } catch (error) {
     if (error instanceof AppError) {
       next(error);
+    } else if (error instanceof Error) {
+      next(new AppError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     } else {
       next(
         new AppError(
@@ -191,6 +197,8 @@ facultySchema.pre('findOneAndUpdate', function (next) {
   } catch (error) {
     if (error instanceof AppError) {
       next(error);
+    } else if (error instanceof Error) {
+      next(new AppError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     } else {
       next(
         new AppError(
@@ -209,6 +217,8 @@ facultySchema.pre('updateOne', function (next) {
   } catch (error) {
     if (error instanceof AppError) {
       next(error);
+    } else if (error instanceof Error) {
+      next(new AppError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     } else {
       next(
         new AppError(
@@ -260,6 +270,8 @@ facultySchema.pre('findOneAndUpdate', async function (next) {
   } catch (error) {
     if (error instanceof AppError) {
       next(error);
+    } else if (error instanceof Error) {
+      next(new AppError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     } else {
       next(
         new AppError(

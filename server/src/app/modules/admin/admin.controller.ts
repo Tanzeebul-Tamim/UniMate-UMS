@@ -5,7 +5,7 @@ import catchAsync from '../../utils/catchAsync';
 import AppError from '../../errors/AppError';
 
 const getAllAdmins = catchAsync(async (req, res) => {
-  const query = req.query;
+  const { query } = req;
   const result = await AdminServices.getAllAdminsFromDB(query);
 
   if (result.length > 0) {
