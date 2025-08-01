@@ -5,7 +5,7 @@ import catchAsync from '../../utils/catchAsync';
 import AppError from '../../errors/AppError';
 
 const getAllStudents = catchAsync(async (req, res) => {
-  const query = req.query;
+  const { query } = req;
   const result = await StudentServices.getAllStudentsFromDB(query);
 
   if (result.length > 0) {
@@ -57,7 +57,11 @@ const getAStudent = catchAsync(async (req, res, next) => {
 const updateAStudent = catchAsync(async (req, res, next) => {
   const { studentId } = req.params;
   const { student } = req.body;
-  const result = await StudentServices.updateAStudentFromDB(studentId, student, next);
+  const result = await StudentServices.updateAStudentFromDB(
+    studentId,
+    student,
+    next,
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

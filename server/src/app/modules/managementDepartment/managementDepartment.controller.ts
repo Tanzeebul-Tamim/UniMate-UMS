@@ -19,7 +19,7 @@ const createManagementDepartment = catchAsync(async (req, res) => {
 });
 
 const getAllManagementDepartments = catchAsync(async (req, res) => {
-  const query = req.query;
+  const { query } = req;
   const result =
     await ManagementDepartmentServices.getAllManagementDepartmentsFromDB(query);
 
