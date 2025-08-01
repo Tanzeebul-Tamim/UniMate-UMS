@@ -1,9 +1,5 @@
-interface TSearchableObject {
-  [key: string]: string | object;
-}
-
-export const generateSearchableFields = <T extends TSearchableObject>(
-  object: T,
+export const generateSearchableFields = (
+  object: Record<string, unknown>,
 ): string[] => {
   const result: string[] = [];
 

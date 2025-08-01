@@ -10,10 +10,10 @@ import {
 } from './faculty.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { restrictFieldsValidator } from '../../utils/restrictFieldsForUpdate';
-import { getFacultyAssignedCourses } from './faculty.utils';
 import { validateId } from '../../utils/idValidator';
 import { NextFunction } from 'express';
 import { removeMiddleName } from '../../utils/middleNameRemover';
+import { getFacultyAssignedCourses } from './faculty.utils';
 
 const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
   const facultyQuery = new QueryBuilder(

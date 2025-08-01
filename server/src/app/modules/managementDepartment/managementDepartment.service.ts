@@ -1,7 +1,5 @@
 import QueryBuilder from '../../builder/QueryBuilder';
-import {
-  ManagementDepartmentSearchableFields,
-} from './managementDepartment.constant';
+import { ManagementDepartmentSearchableFields } from './managementDepartment.constant';
 import { TManagementDepartment } from './managementDepartment.interface';
 import { ManagementDepartment } from './managementDepartment.model';
 
