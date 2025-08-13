@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-export type Day =
+export type TDay =
   | 'Saturday'
   | 'Sunday'
   | 'Monday'
@@ -19,7 +19,7 @@ export type TOfferedCourse = {
   maxCapacity: number;
   remainingCapacity: number;
   section: number;
-  days: Day[];
+  days: TDay[];
   startTime: string;
   endTime: string;
 };

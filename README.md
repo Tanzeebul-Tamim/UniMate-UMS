@@ -164,7 +164,7 @@ _Full API spec and data structure details provided in the analysis document._
 A visual representation of the core database models and relationships:
 
 <p align="center">
-  <img src="./analysis-requirements/UniMate-UMS-Database-Schema.png" alt="Database Schema" width="700"/>
+  <img src="./analysis-requirements/UniMate-UMS-Database-Schema.png" alt="Database Schema" />
 </p>
 
 > **Legend:**
@@ -174,7 +174,8 @@ A visual representation of the core database models and relationships:
 > -   <strong><span style="color:yellow">YELLOW</span>:</strong> Embedded objects
 > -   <strong><span style="color:cyan">CYAN</span>:</strong> Client payloads (Offered Course, Semester Registration)
 
-> ⚠️ <b>Note:</b> Entities shown under <span style="color:cyan"><i>CYAN</i></span> have the same names as their database counterparts but may differ in structure (client payloads vs. DB models).
+> [!IMPORTANT]
+> Entities shown under <span style="color:cyan"><i><strong>CYAN</strong></i></span> have the same names as their database counterparts but may differ in structure (client payloads vs. DB models).
 
 <br>
 
@@ -272,6 +273,7 @@ npm install
     BCRYPT_SALT_ROUNDS=12
     DEFAULT_PASS=ChangeMeToASecurePassword!
     ```
+
 -   **Configuration Details:**
 
     -   <b>NODE_ENV</b>: `development` (local) or `production` (deployed)
